@@ -1,0 +1,87 @@
+import connectToDatabase from "@/lib/db";
+import House from "@/models/House";
+import Member from "@/models/Member";
+import mongoose from "mongoose";
+import { NextRequest, NextResponse } from "next/server";
+
+export const runtime = "nodejs";
+
+export async function POST(request: NextRequest) {
+  await connectToDatabase();
+
+  try {
+    const { name, phone, email, houseId, role } = await request.json();
+
+    if (!name || !phone || !email || !houseId) {
+      return NextResponse.json(
+        { error: "Name, phone, email, and houseId are required" },
+        { status: 400 }
+      );
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(houseId)) {
+      return NextResponse.json({ error: "Invalid houseId" }, { status: 400 });
+    }
+
+    const existingMember = await Member.findOne({ email, houseId });
+    if (existingMember) {
+      return NextResponse.json(
+        { error: "Member with this email already exists in the house" },
+        { status: 409 }
+      );
+    }
+
+    const newMember = await Member.create({
+      name,
+      phone,
+      email,
+      houseId,
+      role: role || "tenant",
+    });
+
+    if (!newMember) {
+      return NextResponse.json(
+        { error: "Failed to create member" },
+        { status: 500 }
+      );
+    }
+
+    await House.findByIdAndUpdate(houseId, {
+      $push: { tenants: newMember._id },
+    });
+
+    return NextResponse.json({ member: newMember }, { status: 201 });
+  } catch (error) {
+    console.error("Error in POST /members:", error);
+    return NextResponse.json(
+      { error: "Failed to add member" },
+      { status: 500 }
+    );
+  }
+}
+
+// Get members by houseId
+export async function GET(request: NextRequest) {
+  await connectToDatabase();
+
+  try {
+    const houseId = request.nextUrl.searchParams.get("houseId");
+
+    if (!houseId || !mongoose.Types.ObjectId.isValid(houseId)) {
+      return NextResponse.json(
+        { error: "Invalid or missing houseId" },
+        { status: 400 }
+      );
+    }
+
+    const members = await Member.find({ houseId });
+
+    return NextResponse.json({ members }, { status: 200 });
+  } catch (error) {
+    console.error("Error in GET /members:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch members" },
+      { status: 500 }
+    );
+  }
+}

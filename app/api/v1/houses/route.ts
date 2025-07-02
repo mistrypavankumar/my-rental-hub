@@ -1,22 +1,20 @@
 import connectToDatabase from "@/lib/db";
 import House from "@/models/House";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, userAgent } from "next/server";
 
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
+  const userId = request.headers.get("x-user-id");
+
   const {
     name,
     address,
     ownerName,
     ownerPhone,
     defaultPrice,
-    utilities,
     rooms,
-    singleRoomRent,
     sharedRoomRent,
-    roomStatus,
-    members,
   } = await request.json();
 
   await connectToDatabase();
@@ -90,6 +88,7 @@ export async function POST(request: NextRequest) {
     }
 
     const newHouse = await House.create({
+      userId,
       name,
       address: {
         street: address.street,
@@ -100,18 +99,8 @@ export async function POST(request: NextRequest) {
       ownerName,
       ownerPhone,
       defaultPrice,
-      utilities: {
-        gasAmount: utilities?.gasAmount || 0,
-        waterAmount: utilities?.waterAmount || 0,
-        electricityAmount: utilities?.electricityAmount || 0,
-        internetAmount: utilities?.internetAmount || 0,
-        otherAmount: utilities?.otherAmount || 0,
-      },
       rooms,
-      singleRoomRent: singleRoomRent || 0,
       sharedRoomRent,
-      roomStatus: roomStatus || [],
-      members: members || [],
     });
 
     return NextResponse.json(

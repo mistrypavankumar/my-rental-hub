@@ -10,6 +10,10 @@ export async function signToken(
   const iat = Math.floor(Date.now() / 1000);
   const exp = iat + parseDuration(expiresIn);
 
+  if (payload.userId && typeof payload.userId !== "string") {
+    payload.userId = payload.userId.toString();
+  }
+
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt(iat)

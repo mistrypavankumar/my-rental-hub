@@ -1,5 +1,5 @@
 import connectToDatabase from "@/lib/db";
-import User from "@/models/User";
+import Admin from "@/models/Admin";
 import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -56,9 +56,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existingUser = await User.findOne({ email });
+    const existingAdmin = await Admin.findOne({ email });
 
-    if (existingUser) {
+    if (existingAdmin) {
       return NextResponse.json(
         {
           error: "Email already exists",
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await User.create({
+    const newAdmin = await Admin.create({
       email,
       password: hashedPassword,
       name,
@@ -80,8 +80,8 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({
-      message: "User registered successfully",
-      user: newUser,
+      message: "Admin registered successfully",
+      admin: newAdmin,
     });
   } catch (error) {
     return NextResponse.json(

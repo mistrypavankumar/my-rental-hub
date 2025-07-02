@@ -1,6 +1,6 @@
 import connectToDatabase from "@/lib/db";
 import { signToken } from "@/lib/jwt";
-import User from "@/models/User";
+import Admin from "@/models/Admin";
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   const { email, password } = await request.json();
 
   try {
-    const user = await User.findOne({ email });
+    const user = await Admin.findOne({ email });
 
     if (!user) {
       return NextResponse.json(
@@ -29,7 +29,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate JWT token
-    const token = await signToken({ userId: user._id, role: user.role });
+    const token = await signToken({
+      userId: user._id.toString(),
+      role: user.role,
+    });
 
     const cookieStore = await cookies();
 
@@ -46,7 +49,6 @@ export async function POST(request: NextRequest) {
     // Return user info (optional)
     return NextResponse.json({
       message: "Login successful",
-      token,
       user: {
         id: user._id.toString(),
         name: user.name,

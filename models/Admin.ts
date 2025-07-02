@@ -34,4 +34,4 @@ const adminSchema = new mongoose.Schema({
   },
 });
 
-export default models.User || model("User", adminSchema);
+export default models.Admin || model("Admin", adminSchema);
