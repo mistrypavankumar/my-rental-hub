@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "./lib/jwt";
-import bcrypt from "bcryptjs";
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("authToken")?.value;
@@ -39,7 +38,7 @@ export async function middleware(request: NextRequest) {
     }
 
     const requestHeaders = new Headers(request.headers);
-    requestHeaders.set("x-user-id", decoded.userId as string);
+    requestHeaders.set("x-admin-id", decoded.adminId as string);
 
     const response = NextResponse.next({
       request: {

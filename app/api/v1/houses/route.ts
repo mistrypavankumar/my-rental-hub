@@ -1,11 +1,11 @@
 import connectToDatabase from "@/lib/db";
 import House from "@/models/House";
-import { NextRequest, NextResponse, userAgent } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
-  const userId = request.headers.get("x-user-id");
+  const adminId = request.headers.get("x-admin-id");
 
   const {
     name,
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     }
 
     const newHouse = await House.create({
-      userId,
+      adminId,
       name,
       address: {
         street: address.street,

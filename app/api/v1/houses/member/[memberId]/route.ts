@@ -1,4 +1,5 @@
 import connectToDatabase from "@/lib/db";
+import House from "@/models/House";
 import Member from "@/models/Member";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
@@ -46,20 +47,11 @@ export async function PUT(
       return NextResponse.json({ error: "Invalid member ID" }, { status: 400 });
     }
 
-    const { name, phone, email, role } = await request.json();
+    const body = await request.json();
 
-    if (!name || !phone || !email) {
-      return NextResponse.json(
-        { error: "Name, phone, and email are required" },
-        { status: 400 }
-      );
-    }
-
-    const updatedMember = await Member.findByIdAndUpdate(
-      memberId,
-      { name, phone, email, role },
-      { new: true }
-    );
+    const updatedMember = await Member.findByIdAndUpdate(memberId, body, {
+      new: true,
+    });
 
     if (!updatedMember) {
       return NextResponse.json({ error: "Member not found" }, { status: 404 });
@@ -84,6 +76,22 @@ export async function DELETE(
   try {
     if (!memberId || !mongoose.Types.ObjectId.isValid(memberId)) {
       return NextResponse.json({ error: "Invalid member ID" }, { status: 400 });
+    }
+
+    const member = await Member.findById(memberId);
+
+    const updateHouse = await House.updateOne(
+      { _id: member?.houseId },
+      {
+        $pull: { tenants: memberId },
+      }
+    );
+
+    if (updateHouse.modifiedCount === 0) {
+      return NextResponse.json(
+        { error: "Failed to update house tenants" },
+        { status: 500 }
+      );
     }
 
     const deletedMember = await Member.findByIdAndDelete(memberId);

@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const houseSchema = new mongoose.Schema(
   {
-    userId: {
+    adminId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Admin",
       required: true,
     },
     name: {

@@ -11,16 +11,16 @@ export async function POST(request: NextRequest) {
   const { email, password } = await request.json();
 
   try {
-    const user = await Admin.findOne({ email });
+    const admin = await Admin.findOne({ email });
 
-    if (!user) {
+    if (!admin) {
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 401 }
       );
     }
 
-    const isValid = await bcrypt.compare(password, user.password);
+    const isValid = await bcrypt.compare(password, admin.password);
     if (!isValid) {
       return NextResponse.json(
         { error: "Invalid email or password" },
@@ -30,8 +30,8 @@ export async function POST(request: NextRequest) {
 
     // Generate JWT token
     const token = await signToken({
-      userId: user._id.toString(),
-      role: user.role,
+      adminId: admin._id.toString(),
+      role: admin.role,
     });
 
     const cookieStore = await cookies();
@@ -49,13 +49,13 @@ export async function POST(request: NextRequest) {
     // Return user info (optional)
     return NextResponse.json({
       message: "Login successful",
-      user: {
-        id: user._id.toString(),
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-        createdAt: user.createdAt,
+      admin: {
+        id: admin._id.toString(),
+        name: admin.name,
+        email: admin.email,
+        phone: admin.phone,
+        role: admin.role,
+        createdAt: admin.createdAt,
       },
     });
   } catch (error) {
