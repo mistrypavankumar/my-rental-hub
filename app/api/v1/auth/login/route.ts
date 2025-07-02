@@ -1,8 +1,8 @@
 import connectToDatabase from "@/lib/db";
+import { signToken } from "@/lib/jwt";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -15,29 +15,37 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json(
-        {
-          error: "Invalid email or password",
-        },
+        { error: "Invalid email or password" },
         { status: 401 }
       );
     }
 
     const isValid = await bcrypt.compare(password, user.password);
-
     if (!isValid) {
       return NextResponse.json(
-        {
-          error: "Invalid email or password",
-        },
+        { error: "Invalid email or password" },
         { status: 401 }
       );
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
-      expiresIn: "7d",
+    // Generate JWT token
+    const token = await signToken({ userId: user._id, role: user.role });
+
+    const cookieStore = await cookies();
+
+    cookieStore.set({
+      name: "authToken",
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
+    // Return user info (optional)
     return NextResponse.json({
+      message: "Login successful",
       token,
       user: {
         id: user._id.toString(),
@@ -50,12 +58,8 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     return NextResponse.json(
-      {
-        error: "An error occurred during login",
-      },
-      {
-        status: 500,
-      }
+      { error: "An error occurred during login" },
+      { status: 500 }
     );
   }
 }

@@ -18,12 +18,17 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
   role: {
     type: String,
     enum: ["admin", "owner", "tenant"],
     default: "admin",
   },
   createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
     type: Date,
     default: Date.now,
   },
