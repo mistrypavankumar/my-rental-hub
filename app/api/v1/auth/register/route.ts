@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   await connectToDatabase();
 
-  const { email, password, name, phone } = await request.json();
+  const { email, password, name } = await request.json();
 
   try {
     if (!name || name.trim().length < 2) {
@@ -44,18 +44,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const phoneRegex = /^\d{10}$/;
-    if (!phone || !phoneRegex.test(phone)) {
-      return NextResponse.json(
-        {
-          error: "Please provide a valid phone number (10 digits)",
-        },
-        {
-          status: 400,
-        }
-      );
-    }
-
     const existingAdmin = await Admin.findOne({ email });
 
     if (existingAdmin) {
@@ -75,7 +63,6 @@ export async function POST(request: NextRequest) {
       email,
       password: hashedPassword,
       name,
-      phone,
       role: "admin",
     });
 

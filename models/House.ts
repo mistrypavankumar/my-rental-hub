@@ -41,27 +41,19 @@ const houseSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    utilities: {
-      gasAmount: {
-        type: Number,
-        default: 0,
-      },
-      waterAmount: {
-        type: Number,
-        default: 0,
-      },
-      electricityAmount: {
-        type: Number,
-        default: 0,
-      },
-      internetAmount: {
-        type: Number,
-        default: 0,
-      },
-      otherAmount: {
-        type: Number,
-        default: 0,
-      },
+    utilitiesIncluded: {
+      type: Boolean,
+      default: false,
+    },
+    paymentDueDate: {
+      type: Date,
+      default: Date.now,
+      required: true,
+    },
+    lateFeePerDay: {
+      type: Number,
+      default: 0,
+      required: true,
     },
     rooms: {
       type: Number,
@@ -72,7 +64,6 @@ const houseSchema = new mongoose.Schema(
     },
     sharedRoomRent: {
       type: Number,
-      required: true,
     },
     roomStatus: [
       {

@@ -1,4 +1,5 @@
 import connectToDatabase from "@/lib/db";
+import Admin from "@/models/Admin";
 import House from "@/models/House";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,8 +14,10 @@ export async function POST(request: NextRequest) {
     ownerName,
     ownerPhone,
     defaultPrice,
+    paymentDueDate,
+    lateFeePerDay,
     rooms,
-    sharedRoomRent,
+    utilitiesIncluded,
   } = await request.json();
 
   await connectToDatabase();
@@ -27,7 +30,9 @@ export async function POST(request: NextRequest) {
       !ownerPhone ||
       !defaultPrice ||
       !rooms ||
-      !sharedRoomRent
+      !adminId ||
+      !paymentDueDate ||
+      !lateFeePerDay
     ) {
       return NextResponse.json(
         {
@@ -96,11 +101,30 @@ export async function POST(request: NextRequest) {
         state: address.state,
         zipCode: address.zipCode,
       },
+      paymentDueDate,
+      lateFeePerDay,
+      utilitiesIncluded: utilitiesIncluded || false,
       ownerName,
       ownerPhone,
       defaultPrice,
       rooms,
-      sharedRoomRent,
+    });
+
+    const admin = await Admin.findById(adminId);
+    if (!admin) {
+      return NextResponse.json(
+        {
+          error: "Admin not found",
+        },
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    await Admin.findByIdAndUpdate(adminId, {
+      $push: { houses: newHouse._id },
     });
 
     return NextResponse.json(

@@ -10,11 +10,15 @@ export async function POST(request: NextRequest) {
   await connectToDatabase();
 
   try {
-    const { name, phone, email, houseId, role } = await request.json();
+    const { name, phone, email, houseId, role, stayInSharedRoom } =
+      await request.json();
 
     if (!name || !phone || !email || !houseId) {
       return NextResponse.json(
-        { error: "Name, phone, email, and houseId are required" },
+        {
+          error:
+            "Name, phone, email, houseId, and stayInSharedRoom are required",
+        },
         { status: 400 }
       );
     }
@@ -37,6 +41,7 @@ export async function POST(request: NextRequest) {
       email,
       houseId,
       role: role || "tenant",
+      stayInSharedRoom,
     });
 
     if (!newMember) {

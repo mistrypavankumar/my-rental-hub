@@ -24,6 +24,10 @@ const memberSchema = new mongoose.Schema({
     enum: ["owner", "tenant"],
     default: "tenant",
   },
+  stayInSharedRoom: {
+    type: Boolean,
+    default: false,
+  },
   joinedAt: {
     type: Date,
     default: Date.now,

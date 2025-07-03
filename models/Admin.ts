@@ -14,16 +14,16 @@ const adminSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  phone: {
-    type: String,
-    required: true,
-  },
-
   role: {
     type: String,
-    enum: ["admin", "owner", "tenant"],
     default: "admin",
   },
+  houses: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "House",
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,
