@@ -1,89 +1,120 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
+import { AppDispatch } from "@/redux/store";
+import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
-const Page = () => {
+import AnimatedFormField from "@/components/animatedFormField/AnimatedFormField";
+import Loader from "@/components/Loader";
+import { loginUser } from "@/services/authServices";
+import { loginSuccess, setLoading } from "@/redux/slices/authSlice";
+import { showErrorMessage } from "@/lib/utils";
+
+const page = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
+  const route = useRouter();
+  const loading = false;
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+
+    if (!formData.email || !formData.password) {
+      toast.error("Please enter email and password");
+      return;
+    }
 
     try {
-      const response = await fetch("/api/v1/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const res = await loginUser(formData);
 
-      const data = await response.json();
+      dispatch(setLoading(true));
 
-      if (!response.ok) {
-        throw new Error(data.error || "Login failed");
+      if (res?.status === 200) {
+        toast.success(res.data.message);
+        dispatch(loginSuccess(res.data.user));
+
+        route.replace(`/house`);
+
+        setFormData({
+          email: "",
+          password: "",
+        });
       }
-
-      setSuccess("Login successful");
-      console.log("Login success:", data);
-
-      // Optional: redirect user after login
-      // router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-      console.error("Login error:", err);
+    } catch (err) {
+      showErrorMessage(err as Error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
   return (
-    <div className="max-w-sm mx-auto mt-10 p-4 border rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">Admin Login</h2>
+    <>
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          {/* <Navbar /> */}
+          <div className="w-full h-[80vh] flex justify-center items-center">
+            <div className=" w-full flex align-center justify-center">
+              <form
+                className="auth_form_container px-4 pt-10 pb-5 mx-auto shadow-md h-auto rounded-md"
+                onSubmit={handleSubmit}
+              >
+                <h1 className="text-2xl mb-10 font-bold text-primaryDarkBlue">
+                  Login
+                </h1>
+                <AnimatedFormField
+                  value={formData.email}
+                  onChange={handleChange}
+                  inputType="email"
+                  labelName="Email"
+                  name="email"
+                />
+                <AnimatedFormField
+                  value={formData.password}
+                  onChange={handleChange}
+                  inputType="password"
+                  labelName="Password"
+                  name="password"
+                />
 
-      <form onSubmit={handleSubmit} className="grid gap-4">
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleInputChange}
-          required
-          className="border p-2 rounded"
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleInputChange}
-          required
-          className="border p-2 rounded"
-        />
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Login
-        </button>
-        {error && <p className="text-red-500">{error}</p>}
-        {success && <p className="text-green-600">{success}</p>}
-      </form>
-    </div>
+                <p className="text-green-500">
+                  <Link href="forgotpassword">Forgot Password ?</Link>
+                </p>
+
+                <input
+                  type="submit"
+                  value="Login"
+                  className="scaleable-btn w-[100px]"
+                />
+
+                <p className="text-slate-600 flex mt-5">
+                  New to Invoice-Nest ?
+                  <span className="text-green-500 underline ml-2 block cursor-pointer">
+                    {" "}
+                    <Link href="/register">Sign Up</Link>
+                  </span>
+                </p>
+              </form>
+            </div>
+          </div>
+        </>
+      )}
+    </>
   );
 };
 
-export default Page;
+export default page;

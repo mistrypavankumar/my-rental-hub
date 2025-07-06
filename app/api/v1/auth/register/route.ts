@@ -59,17 +59,21 @@ export async function POST(request: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newAdmin = await Admin.create({
+    await Admin.create({
       email,
       password: hashedPassword,
       name,
       role: "admin",
     });
 
-    return NextResponse.json({
-      message: "Admin registered successfully",
-      admin: newAdmin,
-    });
+    return NextResponse.json(
+      {
+        message: "Admin registered successfully",
+      },
+      {
+        status: 201,
+      }
+    );
   } catch (error) {
     return NextResponse.json(
       {

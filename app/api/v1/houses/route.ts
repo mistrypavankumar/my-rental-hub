@@ -1,12 +1,11 @@
+import { NextRequest, NextResponse } from "next/server";
 import connectToDatabase from "@/lib/db";
+import { verifyToken } from "@/lib/jwt";
 import Admin from "@/models/Admin";
 import House from "@/models/House";
-import { NextRequest, NextResponse } from "next/server";
-
-export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
-  const adminId = request.headers.get("x-admin-id");
+  const token = request.cookies.get("authToken")?.value;
 
   const {
     name,
@@ -18,11 +17,28 @@ export async function POST(request: NextRequest) {
     lateFeePerDay,
     rooms,
     utilitiesIncluded,
+    singleRoomRent,
+    sharedRoomRent,
   } = await request.json();
 
   await connectToDatabase();
 
   try {
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 400 });
+    }
+
+    const verified = await verifyToken(token);
+    if (!verified) {
+      return NextResponse.json(
+        { error: "Unauthorized token" },
+        { status: 400 }
+      );
+    }
+
+    const adminId = verified.adminId;
+
+    // Check for required fields
     if (
       !name ||
       !address ||
@@ -30,22 +46,15 @@ export async function POST(request: NextRequest) {
       !ownerPhone ||
       !defaultPrice ||
       !rooms ||
-      !adminId ||
       !paymentDueDate ||
       !lateFeePerDay
     ) {
       return NextResponse.json(
-        {
-          error: "Missing required fields",
-        },
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+        { error: "Missing required fields" },
+        { status: 400 }
       );
     }
 
-    // Validate address fields
     if (
       !address.street ||
       !address.city ||
@@ -53,54 +62,37 @@ export async function POST(request: NextRequest) {
       !address.zipCode
     ) {
       return NextResponse.json(
-        {
-          error: "Invalid address format",
-        },
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+        { error: "Invalid address format" },
+        { status: 400 }
       );
     }
 
-    // Validate phone number format (basic validation)
     const phoneRegex = /^\+?[1-9]\d{1,14}$/;
-
     if (!phoneRegex.test(ownerPhone)) {
       return NextResponse.json(
-        {
-          error: "Invalid phone number format",
-        },
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+        { error: "Invalid phone number format" },
+        { status: 400 }
       );
     }
 
-    const existingHouse = await House.findOne({ name, ownerPhone });
+    const existingHouse = await House.findOne({
+      name,
+      adminId,
+    });
 
     if (existingHouse) {
       return NextResponse.json(
         {
-          error: "House with the same name and owner phone already exists",
+          error: "You have already created a house with this name.",
         },
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        }
+        { status: 400 }
       );
     }
 
     const newHouse = await House.create({
       adminId,
       name,
-      address: {
-        street: address.street,
-        city: address.city,
-        state: address.state,
-        zipCode: address.zipCode,
-      },
+      address,
       paymentDueDate,
       lateFeePerDay,
       utilitiesIncluded: utilitiesIncluded || false,
@@ -108,20 +100,9 @@ export async function POST(request: NextRequest) {
       ownerPhone,
       defaultPrice,
       rooms,
+      singleRoomRent,
+      sharedRoomRent,
     });
-
-    const admin = await Admin.findById(adminId);
-    if (!admin) {
-      return NextResponse.json(
-        {
-          error: "Admin not found",
-        },
-        {
-          status: 404,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-    }
 
     await Admin.findByIdAndUpdate(adminId, {
       $push: { houses: newHouse._id },
@@ -132,20 +113,13 @@ export async function POST(request: NextRequest) {
         message: "House created successfully",
         house: newHouse,
       },
-      {
-        status: 201,
-        headers: { "Content-Type": "application/json" },
-      }
+      { status: 201 }
     );
   } catch (error) {
+    console.error("House creation error:", error);
     return NextResponse.json(
-      {
-        error: "Failed to create house",
-      },
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json" },
-      }
+      { error: "Failed to create house" },
+      { status: 500 }
     );
   }
 }

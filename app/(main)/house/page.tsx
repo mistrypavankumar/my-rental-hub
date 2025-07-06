@@ -1,10 +1,17 @@
 "use client";
 
+import { showErrorMessage } from "@/lib/utils";
+import { RootState } from "@/redux/store";
+import { createHouse } from "@/services/houseServices";
+import axios from "axios";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 const Page = () => {
+  const { user } = useSelector((state: RootState) => state.auth);
+
   const [formData, setFormData] = useState({
-    adminId: "",
     name: "",
     address: {
       street: "",
@@ -21,7 +28,6 @@ const Page = () => {
     rooms: 0,
     singleRoomRent: 0,
     sharedRoomRent: 0,
-    tenants: [],
   });
 
   const handleInputChange = (
@@ -56,25 +62,13 @@ const Page = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("/api/v1/houses/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-id": formData.adminId,
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await createHouse(formData);
 
-      const result = await response.json();
-      if (response.ok) {
-        alert("✅ House created successfully!");
-        console.log(result);
-      } else {
-        alert(result.error || "Something went wrong");
+      if (response.status === 201) {
+        toast.success("House is created successfully");
       }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Server error");
+      showErrorMessage(error as Error);
     }
   };
 
@@ -85,16 +79,6 @@ const Page = () => {
           Create New House
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="adminId"
-            value={formData.adminId}
-            onChange={handleInputChange}
-            placeholder="Admin ID"
-            className="w-full border px-4 py-2 rounded"
-            required
-          />
-
           <input
             type="text"
             name="name"

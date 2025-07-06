@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Poppins } from "next/font/google";
+import { Toaster } from "react-hot-toast";
+
+import Providers from "@/redux/Providers";
+import LoadUser from "@/components/LoadUser";
+
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Configure the Poppins font correctly
+const poppins = Poppins({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["300", "400", "500", "700", "800", "900"],
+  variable: "--font-poppins-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -19,15 +22,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+    <html lang="en" className={`${poppins.variable}`}>
+      <body className="antialiased">
+        <Toaster position="top-center" />
+        <Providers>
+          <LoadUser>{children}</LoadUser>
+        </Providers>
       </body>
     </html>
   );

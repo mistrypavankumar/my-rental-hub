@@ -2,7 +2,6 @@ import connectToDatabase from "@/lib/db";
 import { signToken } from "@/lib/jwt";
 import Admin from "@/models/Admin";
 import bcrypt from "bcryptjs";
-import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -16,7 +15,7 @@ export async function POST(request: NextRequest) {
     if (!admin) {
       return NextResponse.json(
         { error: "Invalid email or password" },
-        { status: 401 }
+        { status: 400 }
       );
     }
 
@@ -24,7 +23,7 @@ export async function POST(request: NextRequest) {
     if (!isValid) {
       return NextResponse.json(
         { error: "Invalid email or password" },
-        { status: 401 }
+        { status: 400 }
       );
     }
 
@@ -34,11 +33,23 @@ export async function POST(request: NextRequest) {
       role: admin.role,
     });
 
-    const cookieStore = await cookies();
+    // Prepare response and set cookie
+    const response = NextResponse.json(
+      {
+        message: "Login successful",
+        admin: {
+          id: admin._id.toString(),
+          name: admin.name,
+          email: admin.email,
+          phone: admin.phone,
+          role: admin.role,
+          createdAt: admin.createdAt,
+        },
+      },
+      { status: 200 }
+    );
 
-    cookieStore.set({
-      name: "authToken",
-      value: token,
+    response.cookies.set("authToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
@@ -46,18 +57,7 @@ export async function POST(request: NextRequest) {
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
-    // Return user info (optional)
-    return NextResponse.json({
-      message: "Login successful",
-      admin: {
-        id: admin._id.toString(),
-        name: admin.name,
-        email: admin.email,
-        phone: admin.phone,
-        role: admin.role,
-        createdAt: admin.createdAt,
-      },
-    });
+    return response;
   } catch (error) {
     return NextResponse.json(
       { error: "An error occurred during login" },

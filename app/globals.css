@@ -1,1 +1,33 @@
 @import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  --primary: hsl(210, 93%, 10%);
+  --primary-light: hsl(210, 70%, 15%);
+  --secondary: hsl(125, 78%, 40%);
+  --secondary-light: hsl(125, 78%, 50%);
+}
+
+@theme {
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-secondary: var(--secondary);
+  --color-secondary-light: var(--secondary-light);
+}
+
+@layer components {
+  .scaleHoverEffect {
+    @apply hover:scale-105 transition-all duration-300 hover:shadow-md;
+  }
+
+  .scaleable-btn {
+    @apply bg-primary text-white px-3 py-1.5 rounded-md block ml-auto hover:bg-transparent hover:text-primary border-2 border-primary transition-all duration-300 hover:cursor-pointer hover:shadow-md;
+  }
+
+  .auth_form_container {
+    width: min(500px, 90%);
+  }
+}
