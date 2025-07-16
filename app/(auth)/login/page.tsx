@@ -13,7 +13,7 @@ import { loginUser } from "@/services/authServices";
 import { loginSuccess, setLoading } from "@/redux/slices/authSlice";
 import { showErrorMessage } from "@/lib/utils";
 
-const page = () => {
+const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const route = useRouter();
@@ -66,44 +66,46 @@ const page = () => {
         <Loader />
       ) : (
         <>
-          {/* <Navbar /> */}
-          <div className="w-full h-[80vh] flex justify-center items-center">
-            <div className=" w-full flex align-center justify-center">
+          <div className="w-full h-dvh flex justify-center items-center bg-[linear-gradient(90deg,rgba(0,0,0,0.9),rgba(0,0,0,0)),url('/assets/login_bg.jpg')] bg-cover bg-center bg-no-repeat">
+            <div className=" w-full flex flex-col align-center justify-center">
+              <div className="text-center mb-8 text-3xl md:text-4xl font-bold text-white hover:underline w-fit mx-auto">
+                <Link href={"/"}>MyRental-Hub</Link>
+              </div>
               <form
-                className="auth_form_container px-4 pt-10 pb-5 mx-auto shadow-md h-auto rounded-md"
+                className="auth_form_container px-4 py-5 pb-5 mx-auto shadow-md h-auto rounded-md bg-white/10 border-2 border-white/50 backdrop-blur-lg"
                 onSubmit={handleSubmit}
               >
-                <h1 className="text-2xl mb-10 font-bold text-primaryDarkBlue">
+                <h1 className="text-2xl md:text-3xl mb-10 font-bold text-white">
                   Login
                 </h1>
                 <AnimatedFormField
                   value={formData.email}
                   onChange={handleChange}
                   inputType="email"
-                  labelName="Email"
+                  placeholder="Enter your email"
                   name="email"
                 />
                 <AnimatedFormField
                   value={formData.password}
                   onChange={handleChange}
                   inputType="password"
-                  labelName="Password"
+                  placeholder="Enter your password"
                   name="password"
                 />
 
-                <p className="text-green-500">
+                <p className="text-white hover:underline">
                   <Link href="forgotpassword">Forgot Password ?</Link>
                 </p>
 
                 <input
                   type="submit"
                   value="Login"
-                  className="scaleable-btn w-[100px]"
+                  className="scaleable-btn w-[100px] hover:text-white"
                 />
 
-                <p className="text-slate-600 flex mt-5">
+                <p className="text-white flex mt-5">
                   New to Invoice-Nest ?
-                  <span className="text-green-500 underline ml-2 block cursor-pointer">
+                  <span className="text-white underline ml-2 block cursor-pointer">
                     {" "}
                     <Link href="/register">Sign Up</Link>
                   </span>
@@ -117,4 +119,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

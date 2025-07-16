@@ -29,6 +29,7 @@ const LoadUser = ({ children }: { children: React.ReactNode }) => {
           dispatch(loadUser(res.data.user));
         }
       } catch (err) {
+        console.error("Error loading user:", err);
         dispatch(logout());
         if (!PUBLIC_ROUTES.includes(pathname)) {
           router.replace("/login");
@@ -44,7 +45,7 @@ const LoadUser = ({ children }: { children: React.ReactNode }) => {
     if (!user) {
       fetchUser();
     }
-  }, [pathname, user]);
+  }, [pathname, user, dispatch, router]);
 
   if (loading) return <Loader />;
 
