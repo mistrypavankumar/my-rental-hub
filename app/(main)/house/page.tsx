@@ -1,15 +1,14 @@
 "use client";
 
 import { showErrorMessage } from "@/lib/utils";
-import { RootState } from "@/redux/store";
+// import { RootState } from "@/redux/store";
 import { createHouse } from "@/services/houseServices";
-import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 
 const Page = () => {
-  const { user } = useSelector((state: RootState) => state.auth);
+  // const { user } = useSelector((state: RootState) => state.auth);
 
   const [formData, setFormData] = useState({
     name: "",

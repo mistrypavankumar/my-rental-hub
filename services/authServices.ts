@@ -1,11 +1,9 @@
 "server";
 
-import { LoginProps, LoginResponseProps, RegisterProps } from "@/lib/constants";
+import { LoginProps, RegisterProps } from "@/lib/constants";
 import axios from "axios";
 
-export async function loginUser(
-  formData: LoginProps
-): Promise<LoginResponseProps | any> {
+export async function loginUser(formData: LoginProps) {
   try {
     const res = await axios.post("/api/v1/auth/login", formData);
     return res;

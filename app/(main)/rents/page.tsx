@@ -65,8 +65,9 @@ const Page = () => {
       if (!response.ok) throw new Error(data.error || "Failed to create rent");
 
       setMessage("✅ Rent record created successfully");
-    } catch (err: any) {
-      setMessage(`❌ ${err.message}`);
+    } catch (err) {
+      console.error("Error creating rent record:", err);
+      setMessage(`❌ ${err instanceof Error ? err.message : "Unknown error"}`);
     }
   };
 
