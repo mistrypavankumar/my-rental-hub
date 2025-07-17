@@ -5,7 +5,7 @@ html {
 }
 
 :root {
-  --primary: hsl(210, 93%, 10%);
+  --primary: hsl(210, 93%, 10%); /* Darker primary color: #1e3a8a */
   --primary-light: hsl(210, 70%, 15%);
   --secondary: hsl(125, 78%, 40%);
   --secondary-light: hsl(125, 78%, 50%);

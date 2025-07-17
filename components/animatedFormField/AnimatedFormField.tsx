@@ -26,8 +26,8 @@ const AnimatedFormField = ({
         onChange={onChange}
         name={name}
         placeholder={placeholder}
-        className="form__input w-full border-2 border-white/20 caret-primary rounded-md  outline-none px-4 group  hover:border-white/70
-        bg-white/30 text-black transition-all duration-300"
+        className="form__input w-full border-2 border-white/20 rounded-md  outline-none px-4 group  hover:border-white/70
+        bg-white/30 text-white caret-white transition-all duration-300"
         autoComplete={autoComplete}
       />
     </div>

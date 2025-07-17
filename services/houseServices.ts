@@ -1,6 +1,6 @@
 "server";
 
-import { House, HouseRequest } from "@/lib/constants";
+import { HouseRequest } from "@/lib/constants";
 import axios from "axios";
 
 export async function createHouse(formData: HouseRequest) {

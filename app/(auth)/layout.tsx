@@ -1,11 +1,9 @@
-import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import React from "react";
 
-const MainLayout = ({ children }: { children: React.ReactNode }) => {
+const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
-      <Navbar />
       {children}
       <footer className="absolute bottom-0 w-full text-center text-white backdrop-blur-sm bg-black/40 py-2">
         <p>
@@ -22,4 +20,4 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default MainLayout;
+export default AuthLayout;

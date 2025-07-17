@@ -42,7 +42,7 @@ const LoadUser = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
-    if (!user) {
+    if (!user && !PUBLIC_ROUTES.includes(pathname)) {
       fetchUser();
     }
   }, [pathname, user, dispatch, router]);

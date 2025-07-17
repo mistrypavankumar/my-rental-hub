@@ -20,3 +20,12 @@ export async function registerUser(formData: RegisterProps) {
     throw err;
   }
 }
+
+export async function logoutUser() {
+  try {
+    const res = await axios.post("/api/v1/auth/logout");
+    return res;
+  } catch (err) {
+    throw err;
+  }
+}
