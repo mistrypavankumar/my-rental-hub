@@ -7,7 +7,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { BiUser } from "react-icons/bi";
+import { BiMenuAltLeft, BiUser } from "react-icons/bi";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoAddOutline, IoCheckmarkOutline } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
@@ -55,14 +55,17 @@ const MainNavbar = () => {
       <div className="w-[90%] mx-auto flex justify-between items-center py-4">
         <nav className="w-full">
           <ul className="flex items-center justify-between w-full">
-            <div>
+            <div className="flex items-center gap-3">
+              <div className="md:hidden cursor-pointer">
+                <BiMenuAltLeft size={25} />
+              </div>
               <li>
                 <Link href={"/dashboard"} className="text-xl font-bold">
                   MyRental-Hub
                 </Link>
               </li>
             </div>
-            <div className="hidden md:flex items-center gap-7">
+            <div className="absolute md:relative top-0 left-0 bg-primary h-dvh w-2/3 md:w-auto md:h-auto md:flex items-center gap-7">
               <li>
                 <Link
                   href={"/dashboard"}

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { FaHistory } from "react-icons/fa";
 import { FaCubes, FaHouseChimney } from "react-icons/fa6";
 import { HiUserGroup } from "react-icons/hi";
 
@@ -12,7 +13,7 @@ const Page = () => {
         Overview of your properties and their status.
       </p>
 
-      <div className="grid grid-cols-4 gap-4 mt-10">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-10">
         <AnalyticsCard
           title="House Rent"
           value="$2850"
@@ -30,7 +31,7 @@ const Page = () => {
         <AnalyticsCard
           title="Total Rents History"
           value="12"
-          icon={<HiUserGroup />}
+          icon={<FaHistory />}
         />
       </div>
     </div>
@@ -49,7 +50,7 @@ const AnalyticsCard = ({
   icon: React.ReactNode;
 }) => {
   return (
-    <div className="bg-white border-2 border-gray-200 p-4 rounded-lg shadow-md flex flex-col gap-4">
+    <div className="bg-white border-2 border-gray-200 p-4 rounded-lg shadow-md flex flex-col gap-4 h-[150px]">
       <div className="text-2xl flex items-center justify-between w-full">
         <h3 className="text-lg font-semibold text-gray-500">{title}</h3>
         <span className="w-7 h-7 border-2 border-gray-500 rounded-lg text-lg flex items-center justify-center text-gray-500">
