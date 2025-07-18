@@ -1,11 +1,25 @@
 "use client";
 
+import { RootState } from "@/redux/store";
 import React from "react";
 import { FaHistory } from "react-icons/fa";
 import { FaCubes, FaHouseChimney } from "react-icons/fa6";
 import { HiUserGroup } from "react-icons/hi";
+import { useSelector } from "react-redux";
 
 const Page = () => {
+  const { houses, activeHouse } = useSelector(
+    (state: RootState) => state.house
+  );
+
+  const activeHouseDetails = houses.find(
+    (house) => house._id === activeHouse?.houseId
+  );
+
+  const totalRooms = activeHouseDetails?.rooms || 0;
+  const totalMembers = activeHouseDetails?.tenants?.length || 0;
+  const totalRent = activeHouseDetails?.defaultPrice || 0;
+
   return (
     <div className="min-h-dvh py-5 w-[90%] mx-auto">
       <h1 className="text-xl font-bold text-primary">Dashboard</h1>
@@ -16,15 +30,19 @@ const Page = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-10">
         <AnalyticsCard
           title="House Rent"
-          value="$2850"
+          value={`$${totalRent}`}
           icon={<FaHouseChimney />}
         />
 
-        <AnalyticsCard title="Total Rooms" value="5" icon={<FaCubes />} />
+        <AnalyticsCard
+          title="Total Rooms"
+          value={totalRooms.toString()}
+          icon={<FaCubes />}
+        />
 
         <AnalyticsCard
           title="Total Members"
-          value="12"
+          value={totalMembers.toString()}
           icon={<HiUserGroup />}
         />
 
@@ -34,6 +52,8 @@ const Page = () => {
           icon={<FaHistory />}
         />
       </div>
+
+      {}
     </div>
   );
 };

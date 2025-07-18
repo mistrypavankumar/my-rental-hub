@@ -1,40 +1,83 @@
 "use client";
 
-import { showErrorMessage } from "@/lib/utils";
+import {
+  getObjectFromLocalStorage,
+  setInLocalStorage,
+  showErrorMessage,
+} from "@/lib/utils";
+import {
+  getAllHousesStart,
+  getAllHousesSuccess,
+  setActiveHouse,
+} from "@/redux/slices/houseSlice";
 import { RootState } from "@/redux/store";
 import { logoutUser } from "@/services/authServices";
+import { getHouses } from "@/services/houseServices";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { BiMenuAltLeft, BiUser } from "react-icons/bi";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoAddOutline, IoCheckmarkOutline, IoClose } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const MainNavbar = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const { user } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
+
+  const { user, isAuthenticated } = useSelector(
+    (state: RootState) => state.auth
+  );
+  const { houses, activeHouse } = useSelector(
+    (state: RootState) => state.house
+  );
   const [toggleDropdown, setToggleDropdown] = useState(false);
-  const [activeHouse, setActiveHouse] = useState<string>("1");
   const [isOpenNav, setIsOpenNav] = useState(false);
 
-  const houses = [
-    {
-      name: "Jumanji",
-      id: "1",
-    },
-    {
-      name: "Wonderland",
-      id: "2",
-    },
-    {
-      name: "Narnia",
-      id: "3",
-    },
-  ];
+  useEffect(() => {
+    const fetchHouses = async () => {
+      dispatch(getAllHousesStart());
+
+      try {
+        const res = await getHouses();
+
+        if (res?.status === 200) {
+          dispatch(getAllHousesSuccess(res.data.houses));
+
+          if (
+            res.data.houses.length > 0 &&
+            getObjectFromLocalStorage("activeHouse")
+          ) {
+            dispatch(setActiveHouse(getObjectFromLocalStorage("activeHouse")));
+          } else {
+            dispatch(
+              setActiveHouse({
+                houseId: res.data.houses[0]._id,
+                houseName: res.data.houses[0].name,
+              })
+            );
+            setInLocalStorage(
+              "activeHouse",
+              JSON.stringify({
+                houseId: res.data.houses[0]._id,
+                houseName: res.data.houses[0].name,
+              })
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch houses:", error);
+        showErrorMessage(error as Error);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchHouses();
+    }
+  }, [dispatch, isAuthenticated]);
 
   const handleLogout = async () => {
     try {
@@ -76,7 +119,7 @@ const MainNavbar = () => {
                   : "-translate-x-full md:-translate-0"
               }`}
             >
-              <div className="flex flex-col md:flex-row md:items-center gap-5 md:gap-7 md:mt-0 mt-16 w-[85%] mx-auto">
+              <div className="flex flex-col md:flex-row md:items-center gap-5 md:gap-7 md:mt-0 mt-16 w-[85%] md:w-full mx-auto">
                 <div
                   onClick={() => setIsOpenNav(false)}
                   className=" cursor-pointer absolute top-7 right-7 md:hidden"
@@ -97,6 +140,23 @@ const MainNavbar = () => {
                     Dashboard
                   </Link>
                 </li>
+
+                {isAuthenticated && houses.length > 0 && (
+                  <li>
+                    <Link
+                      onClick={() => setIsOpenNav(false)}
+                      href={"/my-house"}
+                      className={`${
+                        pathname.toLowerCase() === "/my-house"
+                          ? "font-semibold text-white"
+                          : "text-white/50 hover:text-white"
+                      } transition-colors duration-200`}
+                    >
+                      My House
+                    </Link>
+                  </li>
+                )}
+
                 <li>
                   <Link
                     onClick={() => setIsOpenNav(false)}
@@ -168,26 +228,49 @@ const MainNavbar = () => {
                   </div>
                 </div>
                 <div className="border-t border-gray-500/20">
+                  <p className="text-primary px-3 py-2 font-semibold text-sm">
+                    My Houses
+                  </p>
                   <div className="px-3 pt-2">
-                    {houses.map((house) => {
-                      return (
-                        <div
-                          key={house.name}
-                          onClick={() => setActiveHouse(house.id)}
-                          className="flex items-center justify-between cursor-pointer text-gray-700 hover:bg-gray-100 py-2 px-2 rounded-md "
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="w-7 h-7 rounded-md border-2 border-gray-500/50 flex items-center justify-center font-bold text-primary">
-                              {house.name[0].toUpperCase()}
+                    {houses.length > 0 ? (
+                      houses.map((house) => {
+                        return (
+                          <div
+                            key={house.name}
+                            onClick={() => {
+                              setInLocalStorage(
+                                "activeHouse",
+                                JSON.stringify({
+                                  houseId: house._id,
+                                  houseName: house.name,
+                                })
+                              );
+                              dispatch(
+                                setActiveHouse({
+                                  houseId: house._id,
+                                  houseName: house.name,
+                                })
+                              );
+                            }}
+                            className="flex items-center justify-between cursor-pointer text-gray-700 hover:bg-gray-100 py-2 px-2 rounded-md "
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="w-7 h-7 rounded-md border-2 border-gray-500/50 flex items-center justify-center font-bold text-primary">
+                                {house.name[0].toUpperCase()}
+                              </div>
+                              <span>{house.name}</span>
                             </div>
-                            <Link href={`/house/${house.id}`}>
-                              {house.name}
-                            </Link>
+                            {activeHouse?.houseId === house._id && (
+                              <IoCheckmarkOutline />
+                            )}
                           </div>
-                          {activeHouse === house.id && <IoCheckmarkOutline />}
-                        </div>
-                      );
-                    })}
+                        );
+                      })
+                    ) : (
+                      <p className="text-gray-500 text-center py-2">
+                        No houses found
+                      </p>
+                    )}
                     <div
                       onClick={() => {
                         router.push("/house/new");

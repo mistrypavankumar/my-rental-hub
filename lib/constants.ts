@@ -44,8 +44,8 @@ export interface House {
   paymentDueDate: string;
   lateFeePerDay: number;
   rooms: number;
-  tenants: any[];
-  roomStatus: any[];
+  tenants: [];
+  roomStatus: [];
   createdAt: string;
   updatedAt: string;
   __v: number;

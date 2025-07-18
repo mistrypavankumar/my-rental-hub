@@ -5,6 +5,7 @@ import { createHouse } from "@/services/houseServices";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import CustomInputField from "./CustomInputField";
 
 const CreateHouseForm = () => {
   const router = useRouter();
@@ -213,44 +214,3 @@ const CreateHouseForm = () => {
 };
 
 export default CreateHouseForm;
-
-interface CustomInputFieldProps {
-  value: string | number;
-  type?: string;
-  name: string;
-  placeholder?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  required?: boolean;
-  label?: string;
-}
-
-const CustomInputField = ({
-  value,
-  type = "text",
-  name,
-  placeholder,
-  onChange,
-  required = false,
-  label,
-}: CustomInputFieldProps) => {
-  return (
-    <div className="relative">
-      <label
-        htmlFor={name}
-        className="absolute top-[-10px] left-[12px] bg-white block text-sm font-medium text-gray-700"
-      >
-        {label}
-        {label && <span className="text-red-500">{required ? "*" : ""}</span>}
-      </label>
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        className="w-full border border-gray-400 px-4 py-2 rounded"
-        required={required}
-      />
-    </div>
-  );
-};

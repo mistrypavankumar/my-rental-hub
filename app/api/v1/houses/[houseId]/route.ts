@@ -35,6 +35,7 @@ export async function GET(
 
     return NextResponse.json({ house }, { status: 200 });
   } catch (error) {
+    console.error("Failed to fetch house:", error);
     return NextResponse.json(
       { error: "Failed to fetch house" },
       { status: 500 }
@@ -103,6 +104,7 @@ export async function PUT(
 
     return NextResponse.json({ house }, { status: 200 });
   } catch (error) {
+    console.error("Failed to update house:", error);
     return NextResponse.json(
       { error: "Failed to update house" },
       { status: 500 }
@@ -153,6 +155,7 @@ export async function DELETE(
       { status: 200 }
     );
   } catch (error) {
+    console.error("Failed to delete house:", error);
     return NextResponse.json(
       { error: "Failed to delete house" },
       { status: 500 }

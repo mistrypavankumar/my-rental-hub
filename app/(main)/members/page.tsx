@@ -1,8 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
+import CustomInputField from "@/components/CustomInputField";
+import { showErrorMessage } from "@/lib/utils";
+import { RootState } from "@/redux/store";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const Page = () => {
+  const { activeHouse } = useSelector((state: RootState) => state.house);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,6 +19,17 @@ const Page = () => {
   });
 
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (activeHouse) {
+      setFormData((prev) => ({
+        ...prev,
+        houseId: activeHouse.houseId,
+      }));
+    } else {
+      showErrorMessage(new Error("No active house selected"));
+    }
+  }, [activeHouse]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -50,8 +67,8 @@ const Page = () => {
       if (!response.ok) throw new Error(data.error || "Failed to add member");
 
       setMessage("✅ Member added successfully!");
-    } catch (error: any) {
-      setMessage(`❌ ${error.message}`);
+    } catch (error) {
+      showErrorMessage(error as Error);
     }
   };
 
@@ -90,14 +107,10 @@ const Page = () => {
           className="border p-2 rounded"
         />
 
-        <input
-          type="text"
-          name="houseId"
-          placeholder="House ID"
-          value={formData.houseId}
-          onChange={handleInputChange}
-          required
-          className="border p-2 rounded"
+        <CustomInputField
+          name="houseName"
+          value={activeHouse?.houseName || ""}
+          disabled
         />
 
         <select

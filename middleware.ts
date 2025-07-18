@@ -51,6 +51,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.json(
       {
         error: "Invalid or expired token",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 401 }
     );

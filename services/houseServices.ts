@@ -14,3 +14,15 @@ export async function createHouse(formData: HouseRequest) {
     throw err;
   }
 }
+
+export async function getHouses() {
+  try {
+    const res = await axios.get("/api/v1/houses", {
+      withCredentials: true,
+    });
+
+    return res;
+  } catch (err) {
+    throw err;
+  }
+}

@@ -4,6 +4,37 @@ import { verifyToken } from "@/lib/jwt";
 import Admin from "@/models/Admin";
 import House from "@/models/House";
 
+export async function GET(request: NextRequest) {
+  const token = request.cookies.get("authToken")?.value;
+  await connectToDatabase();
+
+  try {
+    const verified = await verifyToken(token as string);
+    if (!verified) {
+      return NextResponse.json(
+        { error: "Unauthorized token" },
+        { status: 401 }
+      );
+    }
+
+    const houses = await House.find({ adminId: verified.adminId }).sort({
+      createdAt: -1,
+    });
+    return NextResponse.json(
+      { houses },
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    console.error("Failed to fetch houses:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch houses" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: NextRequest) {
   const token = request.cookies.get("authToken")?.value;
 
