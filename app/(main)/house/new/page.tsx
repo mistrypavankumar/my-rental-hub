@@ -14,8 +14,13 @@ const House = () => {
         <div>
           <CreateHouseForm />
         </div>
-        <div>
-          <Image src={createHouseImg} alt="Create House" />
+        <div className="w-full flex items-center justify-center">
+          <Image
+            src={createHouseImg}
+            alt="Create House"
+            height={700}
+            width={700}
+          />
         </div>
       </div>
     </div>

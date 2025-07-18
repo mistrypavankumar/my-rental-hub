@@ -71,10 +71,12 @@ const MainNavbar = () => {
             </div>
             <div
               className={`fixed md:relative top-0 left-0 bg-primary h-dvh w-[min(300px,100%)] md:w-auto md:h-auto md:flex items-center gap-7 border-r-2 md:border-0 border-white/20 transition-transform duration-300 ease-in-out ${
-                isOpenNav ? "translate-x-0" : "-translate-x-full"
+                isOpenNav
+                  ? "translate-x-0"
+                  : "-translate-x-full md:-translate-0"
               }`}
             >
-              <div className="flex flex-col md:flex-row md:items-center gap-5 md:gap-7 md:mt-0 mt-16 px-5">
+              <div className="flex flex-col md:flex-row md:items-center gap-5 md:gap-7 md:mt-0 mt-16 w-[85%] mx-auto">
                 <div
                   onClick={() => setIsOpenNav(false)}
                   className=" cursor-pointer absolute top-7 right-7 md:hidden"
@@ -84,6 +86,7 @@ const MainNavbar = () => {
 
                 <li>
                   <Link
+                    onClick={() => setIsOpenNav(false)}
                     href={"/dashboard"}
                     className={`${
                       pathname.toLowerCase() === "/dashboard"
@@ -96,6 +99,7 @@ const MainNavbar = () => {
                 </li>
                 <li>
                   <Link
+                    onClick={() => setIsOpenNav(false)}
                     href={"/members"}
                     className={`${
                       pathname.toLowerCase() === "/members"
@@ -108,6 +112,7 @@ const MainNavbar = () => {
                 </li>
                 <li>
                   <Link
+                    onClick={() => setIsOpenNav(false)}
                     href={"/rents"}
                     className={`${
                       pathname.toLowerCase() === "/rents"
