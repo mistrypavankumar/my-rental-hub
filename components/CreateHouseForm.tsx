@@ -6,27 +6,17 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import CustomInputField from "./CustomInputField";
+import { House } from "@/lib/constants";
 
-const CreateHouseForm = () => {
+const CreateHouseForm = ({
+  initialFormData,
+  submitLabel,
+}: {
+  initialFormData: House;
+  submitLabel: string;
+}) => {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    name: "",
-    address: {
-      street: "",
-      city: "",
-      state: "",
-      zipCode: "",
-    },
-    ownerName: "",
-    ownerPhone: "",
-    defaultPrice: 0,
-    utilitiesIncluded: false,
-    paymentDueDate: "",
-    lateFeePerDay: 0,
-    rooms: 0,
-    singleRoomRent: 0,
-    sharedRoomRent: 0,
-  });
+  const [formData, setFormData] = useState(initialFormData);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -206,7 +196,7 @@ const CreateHouseForm = () => {
           type="submit"
           className="w-full bg-primary-light hover:bg-primary transition-colors duration-300 cursor-pointer text-white py-2 rounded font-semibold"
         >
-          Create House
+          {submitLabel}
         </button>
       </form>
     </div>

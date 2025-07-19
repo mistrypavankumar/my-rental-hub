@@ -26,3 +26,15 @@ export async function getHouses() {
     throw err;
   }
 }
+
+export async function getHouseById(houseId: string) {
+  try {
+    const res = await axios.get(`/api/v1/houses/${houseId}`, {
+      withCredentials: true,
+    });
+
+    return res;
+  } catch (err) {
+    throw err;
+  }
+}

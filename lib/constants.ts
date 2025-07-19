@@ -33,8 +33,8 @@ export interface Address {
 }
 
 export interface House {
-  _id: string;
-  adminId: string;
+  _id?: string;
+  adminId?: string;
   name: string;
   address: Address;
   ownerName: string;
@@ -44,11 +44,13 @@ export interface House {
   paymentDueDate: string;
   lateFeePerDay: number;
   rooms: number;
-  tenants: [];
-  roomStatus: [];
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
+  tenants?: [];
+  roomStatus?: [];
+  singleRoomRent: number;
+  sharedRoomRent: number;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
 }
 
 export interface HouseRequest {
