@@ -4,6 +4,7 @@ import login_bgImg from "./login_bg.jpg";
 import register_bgImg from "./register_bg.jpg";
 import houseImg from "./images/houses.svg";
 import membersImg from "./images/members.svg";
+import rentImg from "./images/rent.svg";
 
 export {
   createHouseImg,
@@ -12,4 +13,5 @@ export {
   register_bgImg,
   houseImg,
   membersImg,
+  rentImg,
 };

@@ -19,11 +19,12 @@ export const setInLocalStorage = (key: string, value: string | boolean) => {
   }
 };
 
-export const getFromLocalStorage = (key: string) => {
+export const getFromLocalStorage = (key: string): unknown => {
   try {
-    return localStorage.getItem(key);
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : null;
   } catch (error) {
-    console.error("Failed to get item from localStorage:", error);
+    console.error("Failed to get or parse item from localStorage:", error);
     return null;
   }
 };
@@ -38,7 +39,7 @@ export const setObjectInLocalStorage = (key: string, value: object) => {
 
 export const getObjectFromLocalStorage = (key: string) => {
   const value = getFromLocalStorage(key);
-  if (value) {
+  if (typeof value === "string") {
     try {
       return JSON.parse(value);
     } catch (error) {

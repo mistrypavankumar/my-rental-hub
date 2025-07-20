@@ -20,7 +20,11 @@ const CustomInputField = ({
   disabled = false,
 }: CustomInputFieldProps) => {
   return (
-    <div className="relative">
+    <div
+      className={`relative rounded-md ${
+        disabled ? "opacity-80 bg-gray-200 cursor-not-allowed" : ""
+      }`}
+    >
       <label
         htmlFor={name}
         className="absolute top-[-10px] left-[12px] bg-white block text-sm font-medium text-gray-700"

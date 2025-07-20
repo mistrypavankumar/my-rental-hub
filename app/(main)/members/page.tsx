@@ -71,72 +71,118 @@ const Page = () => {
   };
 
   return (
-    <div className="w-[90%] mx--auto">
-      <h2 className="text-xl font-semibold mb-4">Add New Member</h2>
-
-      <div>
-        <form onSubmit={handleSubmit} className="grid gap-4">
-          <CustomInputField
-            name="name"
-            placeholder="Name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
-
-          <CustomInputField
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            placeholder="Email"
-            required
-          />
-
-          <CustomInputField
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleInputChange}
-            placeholder="Phone number"
-            required
-          />
-
-          <CustomInputField
-            name="houseName"
-            value={activeHouse?.houseName || ""}
-            disabled
-          />
-
-          <select
-            name="role"
-            value={formData.role}
-            onChange={handleInputChange}
-            className="border p-2 rounded"
+    <div className="w-[90%] mx-auto my-7">
+      <div className="flex flex-col md:flex-row justify-around gap-20">
+        <div className="w-full md:max-w-[600px]">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold">Add New Member</h2>
+            <p className="text-gray-600 mb-10">
+              Fill in the details below to add a new member to your house.
+            </p>
+          </div>
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-4 w-full md:max-w-[600px]"
           >
-            <option value="owner">Owner</option>
-            <option value="tenant">Tenant</option>
-          </select>
+            <CustomInputField
+              name="name"
+              placeholder="Name"
+              value={formData.name}
+              onChange={handleInputChange}
+              required
+            />
 
-          <select
-            name="stayInSharedRoom"
-            value={formData.stayInSharedRoom.toString()}
-            onChange={handleInputChange}
-            className="border p-2 rounded"
-          >
-            <option value="true">Staying in Shared Room</option>
-            <option value="false">Staying in Single Room</option>
-          </select>
+            <CustomInputField
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Email"
+              required
+            />
 
-          <button
-            type="submit"
-            className="bg-primary/90 hover:bg-primary transition-colors duration-300 cursor-pointer text-white px-4 py-2 rounded"
-          >
-            Add Member
-          </button>
+            <CustomInputField
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              placeholder="Phone number"
+              required
+            />
 
-          {message && <p className="mt-2">{message}</p>}
-        </form>
+            <CustomInputField
+              name="houseName"
+              value={activeHouse?.houseName || ""}
+              disabled
+            />
+
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleInputChange}
+              className="w-full border border-gray-400 px-4 py-2 rounded outline-none"
+            >
+              <option value="owner">Owner</option>
+              <option value="tenant">Tenant</option>
+            </select>
+
+            <select
+              name="stayInSharedRoom"
+              value={formData.stayInSharedRoom.toString()}
+              onChange={handleInputChange}
+              className="w-full border border-gray-400 px-4 py-2 rounded outline-none"
+            >
+              <option value="true">Staying in Shared Room</option>
+              <option value="false">Staying in Single Room</option>
+            </select>
+
+            <button
+              type="submit"
+              className="w-full bg-primary-light hover:bg-primary transition-colors duration-300 cursor-pointer text-white py-2 rounded font-semibold"
+            >
+              Add Member
+            </button>
+
+            {message && <p className="mt-2">{message}</p>}
+          </form>
+        </div>
+
+        <div className="w-full min-h-screen">
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold">
+              Members of {activeHouse?.houseName || "Unknown House"} - {3}
+            </h1>
+          </div>
+          <div className="w-full md:w-[90%] mx-auto flex flex-col gap-4 h-screen overflow-y-auto">
+            {[...Array(3)].map((_, index) => (
+              <div
+                key={index}
+                className="border-2 border-gray-300 rounded-md p-3 bg-white shadow-lg flex justify-between items-center"
+              >
+                <div>
+                  <h1 className="text-xl font-bold">Pavan Kumar</h1>
+                  <p className="text-gray-600">07/20/2025</p>
+                </div>
+                <div>
+                  <div className="flex flex-col items-end justify-end">
+                    <h2 className="text-xl font-bold text-green-700">
+                      Tenant | Single room
+                    </h2>
+                    <div className="flex gap-3 text-gray-500">
+                      <p className="hover:underline cursor-pointer text-blue-600 font-medium">
+                        Edit
+                      </p>{" "}
+                      |{" "}
+                      <p className="hover:underline cursor-pointer text-red-500 font-medium">
+                        Delete
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -52,8 +52,6 @@ const Page = () => {
           icon={<FaHistory />}
         />
       </div>
-
-      {}
     </div>
   );
 };

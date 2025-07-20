@@ -45,29 +45,28 @@ const MainNavbar = () => {
       try {
         const res = await getHouses();
 
-        if (res?.status === 200) {
-          dispatch(getAllHousesSuccess(res.data.houses));
+        if (res?.status === 200 && Array.isArray(res.data?.houses)) {
+          const houses = res.data.houses;
+          dispatch(getAllHousesSuccess(houses));
 
-          if (
-            res.data.houses.length > 0 &&
-            getObjectFromLocalStorage("activeHouse")
-          ) {
-            dispatch(setActiveHouse(getObjectFromLocalStorage("activeHouse")));
-          } else {
-            dispatch(
-              setActiveHouse({
-                houseId: res.data.houses[0]._id,
-                houseName: res.data.houses[0].name,
-              })
-            );
-            setObjectInLocalStorage("activeHouse", {
-              houseId: res.data.houses[0]._id,
-              houseName: res.data.houses[0].name,
-            });
+          // If activeHouse already set correctly from localStorage, skip reassignment
+          const stored = getObjectFromLocalStorage("activeHouse");
+
+          const isValid = houses.some(
+            (h: { _id: string }) => h._id === stored?.houseId
+          );
+
+          if (!isValid && houses.length > 0) {
+            const first = {
+              houseId: houses[0]._id,
+              houseName: houses[0].name,
+              defaultPrice: houses[0].defaultPrice || 0,
+            };
+            dispatch(setActiveHouse(first));
+            setObjectInLocalStorage("activeHouse", first);
           }
         }
       } catch (error) {
-        console.error("Failed to fetch houses:", error);
         showErrorMessage(error as Error);
       }
     };
@@ -86,7 +85,7 @@ const MainNavbar = () => {
         router.replace("/login");
         toast.success("Logged out successfully");
         setInLocalStorage("isAuthenticated", false);
-        setInLocalStorage("activeHouse", "");
+        setObjectInLocalStorage("activeHouse", {});
       }
     } catch (err) {
       console.error("Logout failed:", err);
@@ -238,20 +237,25 @@ const MainNavbar = () => {
                           <div
                             key={house.name}
                             onClick={() => {
-                              setInLocalStorage(
-                                "activeHouse",
-                                JSON.stringify({
-                                  houseId: house._id,
-                                  houseName: house.name,
-                                })
-                              );
+                              setObjectInLocalStorage("activeHouse", {
+                                houseId: house._id,
+                                houseName: house.name,
+                                defaultPrice: house.defaultPrice || 0,
+                              });
                               dispatch(
                                 setActiveHouse({
                                   houseId: house._id,
                                   houseName: house.name,
+                                  defaultPrice: house.defaultPrice || 0,
                                 })
                               );
-                              window.location.reload();
+
+                              if (
+                                pathname !== "/dashboard" &&
+                                pathname !== "/members"
+                              ) {
+                                router.refresh();
+                              }
                             }}
                             className="flex items-center justify-between cursor-pointer text-gray-700 hover:bg-gray-100 py-2 px-2 rounded-md "
                           >

@@ -8,6 +8,7 @@ interface HouseState {
     | {
         houseId: string;
         houseName: string;
+        defaultPrice: number;
       }
     | undefined;
   error: string | null;
