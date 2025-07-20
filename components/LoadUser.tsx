@@ -7,7 +7,7 @@ import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Loader from "./Loader";
+import Loader from "./Loader/Loader";
 
 const LoadUser = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();

@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 import AnimatedFormField from "@/components/animatedFormField/AnimatedFormField";
-import Loader from "@/components/Loader";
+import Loader from "@/components/Loader/Loader";
 import { loginUser } from "@/services/authServices";
 import { loginSuccess, setLoading } from "@/redux/slices/authSlice";
 import { showErrorMessage } from "@/lib/utils";

@@ -5,7 +5,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { registerUser } from "@/services/authServices";
-import Loader from "@/components/Loader";
+import Loader from "@/components/Loader/Loader";
 import AnimatedFormField from "@/components/animatedFormField/AnimatedFormField";
 import { showErrorMessage } from "@/lib/utils";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import CreateHouseForm from "@/components/CreateHouseForm";
-import Loader from "@/components/Loader";
+import Loader from "@/components/Loader/Loader";
 import { House } from "@/lib/constants";
 import { showErrorMessage } from "@/lib/utils";
 import { houseImg } from "@/public/assets";
