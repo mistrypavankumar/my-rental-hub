@@ -12,7 +12,7 @@ const Navbar = () => {
             <li className="flex">
               <Link
                 href="/"
-                className={`${linkStyle} pl-0 text-xl font-bold text-white`}
+                className={`${linkStyle} pl-0 text-xl font-bold text-white text-nowrap`}
               >
                 MyRental <span className="">-Hub</span>
               </Link>

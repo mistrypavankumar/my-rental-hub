@@ -1,12 +1,15 @@
 "use client";
 
 import { showErrorMessage } from "@/lib/utils";
-import { createHouse } from "@/services/houseServices";
+import { createHouse, updateHouse } from "@/services/houseServices";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import CustomInputField from "./CustomInputField";
 import { House } from "@/lib/constants";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { setLoading } from "@/redux/slices/authSlice";
 
 const CreateHouseForm = ({
   initialFormData,
@@ -16,6 +19,7 @@ const CreateHouseForm = ({
   submitLabel: string;
 }) => {
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const [formData, setFormData] = useState(initialFormData);
 
   const handleInputChange = (
@@ -50,14 +54,27 @@ const CreateHouseForm = ({
     e.preventDefault();
 
     try {
-      const response = await createHouse(formData);
+      dispatch(setLoading(true));
 
-      if (response.status === 201) {
-        toast.success("House is created successfully");
-        router.replace("/dashboard");
+      if (submitLabel === "Update House") {
+        const response = await updateHouse(formData._id!, formData);
+
+        if (response.status === 200) {
+          toast.success("House is updated successfully");
+          router.replace("/dashboard");
+        }
+      } else if (submitLabel === "Create House") {
+        const response = await createHouse(formData);
+
+        if (response.status === 201) {
+          toast.success("House is created successfully");
+          router.replace("/dashboard");
+        }
       }
     } catch (error) {
       showErrorMessage(error as Error);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
   return (

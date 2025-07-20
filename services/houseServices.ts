@@ -38,3 +38,15 @@ export async function getHouseById(houseId: string) {
     throw err;
   }
 }
+
+export async function updateHouse(houseId: string, formData: HouseRequest) {
+  try {
+    const res = await axios.put(`/api/v1/houses/${houseId}`, formData, {
+      withCredentials: true,
+    });
+
+    return res;
+  } catch (err) {
+    throw err;
+  }
+}
