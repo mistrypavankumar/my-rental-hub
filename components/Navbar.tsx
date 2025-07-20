@@ -1,9 +1,22 @@
+"use client";
+
+import { getFromLocalStorage } from "@/lib/utils";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 import { RiMenu2Line } from "react-icons/ri";
 
 const Navbar = () => {
+  const router = useRouter();
+
   const linkStyle = "flex py-[1em] px-[2em]";
+
+  useEffect(() => {
+    if (getFromLocalStorage("isAuthenticated")) {
+      router.replace("/dashboard");
+    }
+  }, [router]);
+
   return (
     <div>
       <nav className="absolute top-0 z-10 w-full">

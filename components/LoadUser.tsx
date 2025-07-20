@@ -47,9 +47,12 @@ const LoadUser = ({ children }: { children: React.ReactNode }) => {
     }
   }, [pathname, user, dispatch, router]);
 
-  if (loading) return <Loader />;
-
-  return <>{children}</>;
+  return (
+    <>
+      {loading && <Loader />}
+      {children}
+    </>
+  );
 };
 
 export default LoadUser;

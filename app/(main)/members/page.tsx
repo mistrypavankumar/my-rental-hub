@@ -24,10 +24,8 @@ const Page = () => {
     if (activeHouse) {
       setFormData((prev) => ({
         ...prev,
-        houseId: activeHouse.houseId,
+        houseId: activeHouse?.houseId,
       }));
-    } else {
-      showErrorMessage(new Error("No active house selected"));
     }
   }, [activeHouse]);
 
@@ -73,75 +71,73 @@ const Page = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 border rounded shadow">
+    <div className="w-[90%] mx--auto">
       <h2 className="text-xl font-semibold mb-4">Add New Member</h2>
 
-      <form onSubmit={handleSubmit} className="grid gap-4">
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={formData.name}
-          onChange={handleInputChange}
-          required
-          className="border p-2 rounded"
-        />
+      <div>
+        <form onSubmit={handleSubmit} className="grid gap-4">
+          <CustomInputField
+            name="name"
+            placeholder="Name"
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+          />
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleInputChange}
-          required
-          className="border p-2 rounded"
-        />
+          <CustomInputField
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            placeholder="Email"
+            required
+          />
 
-        <input
-          type="tel"
-          name="phone"
-          placeholder="Phone"
-          value={formData.phone}
-          onChange={handleInputChange}
-          required
-          className="border p-2 rounded"
-        />
+          <CustomInputField
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleInputChange}
+            placeholder="Phone number"
+            required
+          />
 
-        <CustomInputField
-          name="houseName"
-          value={activeHouse?.houseName || ""}
-          disabled
-        />
+          <CustomInputField
+            name="houseName"
+            value={activeHouse?.houseName || ""}
+            disabled
+          />
 
-        <select
-          name="role"
-          value={formData.role}
-          onChange={handleInputChange}
-          className="border p-2 rounded"
-        >
-          <option value="owner">Owner</option>
-          <option value="tenant">Tenant</option>
-        </select>
+          <select
+            name="role"
+            value={formData.role}
+            onChange={handleInputChange}
+            className="border p-2 rounded"
+          >
+            <option value="owner">Owner</option>
+            <option value="tenant">Tenant</option>
+          </select>
 
-        <select
-          name="stayInSharedRoom"
-          value={formData.stayInSharedRoom.toString()}
-          onChange={handleInputChange}
-          className="border p-2 rounded"
-        >
-          <option value="true">Staying in Shared Room</option>
-          <option value="false">Staying in Single Room</option>
-        </select>
+          <select
+            name="stayInSharedRoom"
+            value={formData.stayInSharedRoom.toString()}
+            onChange={handleInputChange}
+            className="border p-2 rounded"
+          >
+            <option value="true">Staying in Shared Room</option>
+            <option value="false">Staying in Single Room</option>
+          </select>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Add Member
-        </button>
+          <button
+            type="submit"
+            className="bg-primary/90 hover:bg-primary transition-colors duration-300 cursor-pointer text-white px-4 py-2 rounded"
+          >
+            Add Member
+          </button>
 
-        {message && <p className="mt-2">{message}</p>}
-      </form>
+          {message && <p className="mt-2">{message}</p>}
+        </form>
+      </div>
     </div>
   );
 };

@@ -11,7 +11,7 @@ import AnimatedFormField from "@/components/animatedFormField/AnimatedFormField"
 import Loader from "@/components/Loader/Loader";
 import { loginUser } from "@/services/authServices";
 import { loginSuccess, setLoading } from "@/redux/slices/authSlice";
-import { showErrorMessage } from "@/lib/utils";
+import { setInLocalStorage, showErrorMessage } from "@/lib/utils";
 
 const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -45,6 +45,7 @@ const Page = () => {
       if (res?.status === 200) {
         toast.success(res.data.message);
         dispatch(loginSuccess(res.data.user));
+        setInLocalStorage("isAuthenticated", true);
 
         route.replace(`/dashboard`);
 

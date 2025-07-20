@@ -34,7 +34,7 @@ const CustomInputField = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        className="w-full border border-gray-400 px-4 py-2 rounded"
+        className="w-full border border-gray-400 px-4 py-2 rounded outline-none"
         required={required}
         disabled={disabled}
       />

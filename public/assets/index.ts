@@ -3,5 +3,13 @@ import bannerImg from "./banner.jpg";
 import login_bgImg from "./login_bg.jpg";
 import register_bgImg from "./register_bg.jpg";
 import houseImg from "./images/houses.svg";
+import membersImg from "./images/members.svg";
 
-export { createHouseImg, bannerImg, login_bgImg, register_bgImg, houseImg };
+export {
+  createHouseImg,
+  bannerImg,
+  login_bgImg,
+  register_bgImg,
+  houseImg,
+  membersImg,
+};

@@ -3,6 +3,7 @@
 import {
   getObjectFromLocalStorage,
   setInLocalStorage,
+  setObjectInLocalStorage,
   showErrorMessage,
 } from "@/lib/utils";
 import {
@@ -59,13 +60,10 @@ const MainNavbar = () => {
                 houseName: res.data.houses[0].name,
               })
             );
-            setInLocalStorage(
-              "activeHouse",
-              JSON.stringify({
-                houseId: res.data.houses[0]._id,
-                houseName: res.data.houses[0].name,
-              })
-            );
+            setObjectInLocalStorage("activeHouse", {
+              houseId: res.data.houses[0]._id,
+              houseName: res.data.houses[0].name,
+            });
           }
         }
       } catch (error) {
@@ -87,6 +85,8 @@ const MainNavbar = () => {
         setToggleDropdown(false);
         router.replace("/login");
         toast.success("Logged out successfully");
+        setInLocalStorage("isAuthenticated", false);
+        setInLocalStorage("activeHouse", "");
       }
     } catch (err) {
       console.error("Logout failed:", err);

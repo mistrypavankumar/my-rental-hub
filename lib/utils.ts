@@ -11,9 +11,9 @@ export const showErrorMessage = (error: Error) => {
   }
 };
 
-export const setInLocalStorage = (key: string, value: string) => {
+export const setInLocalStorage = (key: string, value: string | boolean) => {
   try {
-    localStorage.setItem(key, value);
+    localStorage.setItem(key, JSON.stringify(value));
   } catch (error) {
     console.error("Failed to set item in localStorage:", error);
   }
@@ -25,6 +25,14 @@ export const getFromLocalStorage = (key: string) => {
   } catch (error) {
     console.error("Failed to get item from localStorage:", error);
     return null;
+  }
+};
+
+export const setObjectInLocalStorage = (key: string, value: object) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (error) {
+    console.error("Failed to set object in localStorage:", error);
   }
 };
 
