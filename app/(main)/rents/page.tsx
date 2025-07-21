@@ -1,30 +1,48 @@
 "use client";
 
 import CustomInputField from "@/components/CustomInputField";
+import RentRecord from "@/components/RentRecord";
+import { RentProps } from "@/lib/constants";
+import { showErrorMessage } from "@/lib/utils";
 import { RootState } from "@/redux/store";
-import React, { useState } from "react";
+import { createRent, updateRentById } from "@/services/houseServices";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
 const Page = () => {
   const { activeHouse } = useSelector((state: RootState) => state.house);
 
-  const [formData, setFormData] = useState({
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [formMode, setFormMode] = useState("create");
+
+  const currentMonthDate = new Date().toISOString().split("T")[0];
+
+  const [formData, setFormData] = useState<RentProps>({
     houseId: activeHouse?.houseId || "",
-    month: "",
+    month: currentMonthDate,
     houseRent: activeHouse?.defaultPrice || 0,
-    gas: "",
-    electricity: "",
-    internet: "",
-    water: "",
-    totalRent: "",
-    splitAmount: "",
+    gas: 0,
+    electricity: 0,
+    internet: 0,
+    water: 0,
+    totalRent: 0,
+    splitAmount: 0,
     lateFeeApplied: false,
-    lateFeeAmount: "",
+    lateFeeAmount: 0,
     reasonForLateFee: "",
   });
 
-  const [message, setMessage] = useState("");
+  useEffect(() => {
+    if (activeHouse) {
+      setFormData((prev) => ({
+        ...prev,
+        houseId: activeHouse?.houseId,
+        month: currentMonthDate,
+        houseRent: activeHouse?.defaultPrice || 0,
+      }));
+    }
+  }, [activeHouse, currentMonthDate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -35,8 +53,6 @@ const Page = () => {
     }));
   };
 
-  const currentMonthDate = new Date().toISOString().split("T")[0];
-
   const totalRent =
     Number(formData.houseRent) +
     Number(formData.gas) +
@@ -46,34 +62,47 @@ const Page = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage("");
 
     try {
-      const response = await fetch("/api/v1/houses/rent", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          month: currentMonthDate,
-          houseRent: Number(formData.houseRent),
-          gas: Number(formData.gas),
-          electricity: Number(formData.electricity),
-          internet: Number(formData.internet),
-          water: Number(formData.water),
-          totalRent: totalRent,
-        }),
+      let response = null;
+
+      if (formMode === "create") {
+        response = await createRent(formData);
+      } else if (formMode === "edit") {
+        response = await updateRentById(formData._id!, formData);
+      }
+
+      if (response!.status !== 201 && response!.status !== 200) {
+        throw new Error(
+          `Failed to ${formMode === "create" ? "create" : "update"} rent record`
+        );
+      }
+
+      toast.success(
+        `Rent record ${
+          formMode === "create" ? "created" : "updated"
+        } successfully`
+      );
+
+      setRefreshKey((prev) => prev + 1);
+      setFormData({
+        houseId: activeHouse?.houseId || "",
+        month: currentMonthDate,
+        houseRent: activeHouse?.defaultPrice || 0,
+        gas: 0,
+        electricity: 0,
+        internet: 0,
+        water: 0,
+        totalRent: 0,
+        splitAmount: 0,
+        lateFeeApplied: false,
+        lateFeeAmount: 0,
+        reasonForLateFee: "",
       });
 
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.error || "Failed to create rent");
-
-      toast.success("✅ Rent record created successfully");
+      setFormMode("create");
     } catch (err) {
-      console.error("Error creating rent record:", err);
-      toast.error(`${err instanceof Error ? err.message : "Unknown error"}`);
+      showErrorMessage(err as Error);
     }
   };
 
@@ -117,6 +146,7 @@ const Page = () => {
               value={formData.gas}
               onChange={handleInputChange}
               placeholder="Gas"
+              label="Gas"
             />
 
             <CustomInputField
@@ -124,6 +154,7 @@ const Page = () => {
               value={formData.electricity}
               onChange={handleInputChange}
               placeholder="Electricity"
+              label="Electricity"
             />
 
             <CustomInputField
@@ -131,6 +162,7 @@ const Page = () => {
               value={formData.internet}
               onChange={handleInputChange}
               placeholder="Internet"
+              label="Internet"
             />
 
             <CustomInputField
@@ -138,6 +170,7 @@ const Page = () => {
               value={formData.water}
               onChange={handleInputChange}
               placeholder="Water"
+              label="Water"
             />
 
             <CustomInputField
@@ -151,45 +184,19 @@ const Page = () => {
               type="submit"
               className="w-full bg-primary-light hover:bg-primary transition-colors duration-300 cursor-pointer text-white py-2 rounded font-semibold"
             >
-              Create Rent
+              {formMode === "create"
+                ? "Create Rent Record"
+                : "Update Rent Record"}
             </button>
-
-            {message && <p className="mt-2">{message}</p>}
           </form>
         </div>
         <div className="w-full min-h-screen">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold">History of Rents - {3}</h1>
-          </div>
-          <div className="w-full md:w-[90%] mx-auto flex flex-col gap-4 h-screen overflow-y-auto">
-            {[...Array(3)].map((_, index) => (
-              <div
-                key={index}
-                className="border-2 border-gray-300 rounded-md p-3 bg-white shadow-lg flex justify-between items-center"
-              >
-                <div>
-                  <h1 className="text-xl font-bold">
-                    {activeHouse?.houseName || "Unknown House"}
-                  </h1>
-                  <p className="text-gray-600">07/20/2025</p>
-                </div>
-                <div>
-                  <div className="flex flex-col items-end justify-end">
-                    <h2 className="text-xl font-bold text-green-700">$3500</h2>
-                    <div className="flex gap-3 text-gray-500">
-                      <p className="hover:underline cursor-pointer text-blue-600 font-medium">
-                        Edit
-                      </p>{" "}
-                      |{" "}
-                      <p className="hover:underline cursor-pointer text-red-500 font-medium">
-                        Delete
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <RentRecord
+            key={refreshKey}
+            activeHouse={activeHouse}
+            setFormData={setFormData}
+            setFormMode={setFormMode}
+          />
         </div>
       </div>
     </div>

@@ -1,15 +1,22 @@
 "use client";
 
 import CustomInputField from "@/components/CustomInputField";
+import MemberRecord from "@/components/MemberRecord";
+import { MemberProps } from "@/lib/constants";
 import { showErrorMessage } from "@/lib/utils";
 import { RootState } from "@/redux/store";
+import { createMember, updateMemberById } from "@/services/houseServices";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
 const Page = () => {
   const { activeHouse } = useSelector((state: RootState) => state.house);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [formMode, setFormMode] = useState("create");
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<MemberProps>({
+    _id: "",
     name: "",
     email: "",
     phone: "",
@@ -17,8 +24,6 @@ const Page = () => {
     role: "tenant",
     stayInSharedRoom: false,
   });
-
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (activeHouse) {
@@ -49,22 +54,37 @@ const Page = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage("");
 
     try {
-      const response = await fetch("/api/v1/houses/member", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      let response = null;
+
+      if (formMode === "create") {
+        response = await createMember(formData);
+      } else if (formMode === "edit") {
+        response = await updateMemberById(formData._id!, formData);
+      }
+
+      if (response!.status !== 201 && response!.status !== 200) {
+        throw new Error(
+          `Failed to ${formMode === "create" ? "create" : "update"} member`
+        );
+      }
+
+      toast.success(
+        `Member ${formMode === "create" ? "added" : "updated"} successfully!`
+      );
+      setRefreshKey((prev) => prev + 1);
+
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        houseId: activeHouse?.houseId || "",
+        role: "tenant",
+        stayInSharedRoom: false,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.error || "Failed to add member");
-
-      setMessage("✅ Member added successfully!");
+      setFormMode("create");
     } catch (error) {
       showErrorMessage(error as Error);
     }
@@ -128,7 +148,7 @@ const Page = () => {
 
             <select
               name="stayInSharedRoom"
-              value={formData.stayInSharedRoom.toString()}
+              value={formData.stayInSharedRoom!.toString()}
               onChange={handleInputChange}
               className="w-full border border-gray-400 px-4 py-2 rounded outline-none"
             >
@@ -140,48 +160,18 @@ const Page = () => {
               type="submit"
               className="w-full bg-primary-light hover:bg-primary transition-colors duration-300 cursor-pointer text-white py-2 rounded font-semibold"
             >
-              Add Member
+              {formMode === "create" ? "Add Member" : "Update Member"}
             </button>
-
-            {message && <p className="mt-2">{message}</p>}
           </form>
         </div>
 
         <div className="w-full min-h-screen">
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold">
-              Members of {activeHouse?.houseName || "Unknown House"} - {3}
-            </h1>
-          </div>
-          <div className="w-full md:w-[90%] mx-auto flex flex-col gap-4 h-screen overflow-y-auto">
-            {[...Array(3)].map((_, index) => (
-              <div
-                key={index}
-                className="border-2 border-gray-300 rounded-md p-3 bg-white shadow-lg flex justify-between items-center"
-              >
-                <div>
-                  <h1 className="text-xl font-bold">Pavan Kumar</h1>
-                  <p className="text-gray-600">07/20/2025</p>
-                </div>
-                <div>
-                  <div className="flex flex-col items-end justify-end">
-                    <h2 className="text-xl font-bold text-green-700">
-                      Tenant | Single room
-                    </h2>
-                    <div className="flex gap-3 text-gray-500">
-                      <p className="hover:underline cursor-pointer text-blue-600 font-medium">
-                        Edit
-                      </p>{" "}
-                      |{" "}
-                      <p className="hover:underline cursor-pointer text-red-500 font-medium">
-                        Delete
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <MemberRecord
+            key={refreshKey}
+            activeHouse={activeHouse}
+            setFormData={setFormData}
+            setFormMode={setFormMode}
+          />
         </div>
       </div>
     </div>

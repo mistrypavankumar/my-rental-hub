@@ -25,7 +25,10 @@ export async function GET(
     return NextResponse.json({ member }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch member details" },
+      {
+        error: "Failed to fetch member details",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }
@@ -60,7 +63,10 @@ export async function PUT(
     return NextResponse.json({ member: updatedMember }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to update member details" },
+      {
+        error: "Failed to update member details",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }
@@ -106,7 +112,10 @@ export async function DELETE(
     );
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to delete member" },
+      {
+        error: "Failed to delete member",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

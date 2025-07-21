@@ -6,22 +6,21 @@ import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const {
-    month,
-    houseId,
-    gas,
-    electricity,
-    internet,
-    water,
-    lateFeeApplied,
-    houseRent,
-    totalRent,
-  } = await request.json();
-
   await connectToDatabase();
 
   try {
-    if (!month || !houseId || gas === undefined || electricity === undefined) {
+    const {
+      month,
+      houseId,
+      gas,
+      electricity,
+      internet,
+      water,
+      houseRent,
+      totalRent,
+    } = await request.json();
+
+    if (!month || !houseId) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -51,7 +50,7 @@ export async function POST(request: NextRequest) {
       water,
       houseRent,
       totalRent,
-      lateFeeApplied: lateFeeApplied ?? false,
+      lateFeeApplied: false,
       lateFeeAmount: 0,
       reasonForLateFee: "",
     });
@@ -75,7 +74,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   await connectToDatabase();
 
-  const { houseId } = await request.json();
+  const houseId = request.nextUrl.searchParams.get("houseId");
 
   try {
     if (!houseId || !mongoose.Types.ObjectId.isValid(houseId)) {
@@ -85,7 +84,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const rents = await Rent.find({ houseId });
+    const rents = await Rent.find({ houseId }).sort({ month: -1 });
     return NextResponse.json(
       {
         message: "Rents fetched successfully",
@@ -93,9 +92,12 @@ export async function GET(request: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: unknown) {
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: "Internal server error",
+        message: (error as Error).message || "Failed to fetch rents",
+      },
       { status: 500 }
     );
   }

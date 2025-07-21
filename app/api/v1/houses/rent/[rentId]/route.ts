@@ -7,40 +7,31 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { rentId: string } }
 ) {
-  const { rentId } = params;
+  const rentId = params.rentId;
 
   await connectToDatabase();
 
-  const body = await request.json();
-  const { updateFields } = body;
-
-  // Validate rentId
-  if (!rentId || !mongoose.Types.ObjectId.isValid(rentId)) {
-    return NextResponse.json(
-      { error: "Invalid or missing rentId" },
-      { status: 400 }
-    );
-  }
-
   try {
-    const existingRent = await Rent.findById(rentId);
-    if (!existingRent) {
+    // Validate rentId
+    if (!rentId || !mongoose.Types.ObjectId.isValid(rentId)) {
+      return NextResponse.json(
+        { error: "Invalid or missing rentId" },
+        { status: 400 }
+      );
+    }
+
+    const body = await request.json();
+
+    const updatedRent = await Rent.findByIdAndUpdate(rentId, body, {
+      new: true,
+    });
+
+    if (!updatedRent) {
       return NextResponse.json(
         { error: "Rent record not found" },
         { status: 404 }
       );
     }
-
-    const updatedRent = await Rent.findByIdAndUpdate(
-      rentId,
-      {
-        ...updateFields,
-        updatedAt: new Date(),
-      },
-      {
-        new: true,
-      }
-    );
 
     return NextResponse.json(
       {
@@ -90,7 +81,10 @@ export async function DELETE(
     );
   } catch (error) {
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: "Internal server error",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

@@ -16,11 +16,9 @@ const rentSchema = new mongoose.Schema({
   },
   gas: {
     type: Number,
-    required: true,
   },
   electricity: {
     type: Number,
-    required: true,
   },
   internet: {
     type: Number,

@@ -53,6 +53,36 @@ export interface House {
   __v?: number;
 }
 
+export interface MemberProps {
+  _id?: string;
+  name: string;
+  phone: string;
+  email: string;
+  houseId: string;
+  role?: "owner" | "tenant";
+  stayInSharedRoom?: boolean;
+  joinedAt?: Date;
+  updatedAt?: Date;
+}
+
+export interface RentProps {
+  _id?: string;
+  houseId: string;
+  month: string;
+  houseRent: number;
+  gas: number;
+  electricity: number;
+  internet: number;
+  water: number;
+  totalRent: number;
+  splitAmount?: number;
+  lateFeeApplied?: boolean;
+  lateFeeAmount?: number;
+  reasonForLateFee?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface HouseRequest {
   name: string;
   address: {
