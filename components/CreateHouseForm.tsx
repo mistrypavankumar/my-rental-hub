@@ -1,7 +1,11 @@
 "use client";
 
-import { showErrorMessage } from "@/lib/utils";
-import { createHouse, updateHouse } from "@/services/houseServices";
+import { setObjectInLocalStorage, showErrorMessage } from "@/lib/utils";
+import {
+  createHouse,
+  deleteHouse,
+  updateHouse,
+} from "@/services/houseServices";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
@@ -10,6 +14,7 @@ import { House } from "@/lib/constants";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import { setLoading } from "@/redux/slices/authSlice";
+import { setPrefetchHouses } from "@/redux/slices/houseSlice";
 
 const CreateHouseForm = ({
   initialFormData,
@@ -61,6 +66,7 @@ const CreateHouseForm = ({
 
         if (response.status === 200) {
           toast.success("House is updated successfully");
+
           router.replace("/dashboard");
         }
       } else if (submitLabel === "Create House") {
@@ -75,8 +81,40 @@ const CreateHouseForm = ({
       showErrorMessage(error as Error);
     } finally {
       dispatch(setLoading(false));
+      dispatch(setPrefetchHouses(true));
+
+      // set the active house in local storage
+      setObjectInLocalStorage("activeHouse", {
+        houseId: formData._id!,
+        houseName: formData.name,
+        defaultPrice: formData.defaultPrice || 0,
+      });
     }
   };
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    if (!formData._id) {
+      toast.error("House ID is missing");
+      return;
+    }
+
+    try {
+      const res = await deleteHouse(formData._id);
+
+      if (res.status === 200) {
+        toast.success("House deleted successfully");
+        router.replace("/dashboard");
+      }
+
+      dispatch(setPrefetchHouses(true));
+      dispatch(setLoading(false));
+    } catch (error) {
+      showErrorMessage(error as Error);
+    }
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -209,12 +247,23 @@ const CreateHouseForm = ({
           />
         </div>
 
-        <button
-          type="submit"
-          className="w-full bg-primary-light hover:bg-primary transition-colors duration-300 cursor-pointer text-white py-2 rounded font-semibold"
-        >
-          {submitLabel}
-        </button>
+        <div className="flex items-center justify-between gap-10">
+          <button
+            type="submit"
+            className="w-full bg-primary-light hover:bg-primary transition-colors duration-300 cursor-pointer text-white py-2 rounded font-semibold"
+          >
+            {submitLabel}
+          </button>
+
+          {submitLabel === "Update House" && (
+            <button
+              onClick={handleDelete}
+              className="w-full bg-red-600 hover:bg-red-500 transition-colors duration-300 cursor-pointer text-white py-2 rounded font-semibold"
+            >
+              Delete House
+            </button>
+          )}
+        </div>
       </form>
     </div>
   );

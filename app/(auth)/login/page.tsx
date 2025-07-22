@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { AppDispatch } from "@/redux/store";
 import { useDispatch } from "react-redux";
@@ -11,18 +11,30 @@ import AnimatedFormField from "@/components/animatedFormField/AnimatedFormField"
 import Loader from "@/components/Loader/Loader";
 import { loginUser } from "@/services/authServices";
 import { loginSuccess, setLoading } from "@/redux/slices/authSlice";
-import { setInLocalStorage, showErrorMessage } from "@/lib/utils";
+import {
+  getFromLocalStorage,
+  setInLocalStorage,
+  showErrorMessage,
+} from "@/lib/utils";
 
 const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const route = useRouter();
+  const router = useRouter();
   const loading = false;
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  useEffect(() => {
+    const isAuthenticated = getFromLocalStorage("isAuthenticated");
+
+    if (isAuthenticated) {
+      router.replace("/dashboard");
+    }
+  }, [router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,7 +59,7 @@ const Page = () => {
         dispatch(loginSuccess(res.data.user));
         setInLocalStorage("isAuthenticated", true);
 
-        route.replace(`/dashboard`);
+        router.replace(`/dashboard`);
 
         setFormData({
           email: "",

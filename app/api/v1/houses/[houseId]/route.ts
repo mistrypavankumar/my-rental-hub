@@ -135,14 +135,7 @@ export async function DELETE(
   }
 
   try {
-    const members = await Member.deleteMany({ houseId });
-
-    if (members.deletedCount === 0) {
-      return NextResponse.json(
-        { error: "No members found for this house" },
-        { status: 404 }
-      );
-    }
+    await Member.deleteMany({ houseId });
 
     const house = await House.findByIdAndDelete(houseId);
 

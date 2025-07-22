@@ -3,7 +3,7 @@ import "./Loader.css";
 
 const Loader = () => {
   return (
-    <div className="bg-primary absolute inset-0 top-0 flex items-center justify-center z-50">
+    <div className="bg-primary fixed inset-0 top-0 flex items-center justify-center z-50">
       <span className="loader"></span>
     </div>
   );

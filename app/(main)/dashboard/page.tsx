@@ -1,13 +1,15 @@
 "use client";
 
 import { RootState } from "@/redux/store";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { FaHistory } from "react-icons/fa";
 import { FaCubes, FaHouseChimney } from "react-icons/fa6";
 import { HiUserGroup } from "react-icons/hi";
 import { useSelector } from "react-redux";
 
 const Page = () => {
+  const router = useRouter();
   const { houses, activeHouse } = useSelector(
     (state: RootState) => state.house
   );
@@ -16,12 +18,35 @@ const Page = () => {
     (house) => house._id === activeHouse?.houseId
   );
 
-  const totalRooms = activeHouseDetails?.rooms || 0;
-  const totalMembers = activeHouseDetails?.tenants?.length || 0;
-  const totalRent = activeHouseDetails?.defaultPrice || 0;
+  const [analysisData, setAnalysisData] = useState({
+    totalRooms: 0,
+    totalMembers: 0,
+    totalRent: 0,
+  });
+
+  useEffect(() => {
+    if (activeHouseDetails) {
+      setAnalysisData({
+        totalRooms: activeHouseDetails.rooms || 0,
+        totalMembers: activeHouseDetails.tenants?.length || 0,
+        totalRent: activeHouseDetails.defaultPrice || 0,
+      });
+    }
+  }, [activeHouseDetails, router]);
+
+  const { totalRooms, totalMembers, totalRent } = analysisData;
 
   return (
     <div className="min-h-dvh py-5 w-[90%] mx-auto">
+      {!activeHouseDetails && (
+        <div className="flex flex-col items-center justify-center gap-5 mb-10 bg-red-100 p-5 rounded-lg">
+          <p className="text-red-600 text-lg">
+            Please create a new house to get started. Go to profile dropdown and
+            click on <span className="font-semibold underline">New House</span>.
+          </p>
+        </div>
+      )}
+
       <h1 className="text-xl font-bold text-primary">Dashboard</h1>
       <p className="text-sm text-gray-500">
         Overview of your properties and their status.

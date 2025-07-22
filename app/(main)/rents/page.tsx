@@ -60,8 +60,20 @@ const Page = () => {
     Number(formData.internet) +
     Number(formData.water);
 
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      totalRent: totalRent,
+    }));
+  }, [totalRent, activeHouse]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!activeHouse) {
+      toast.error("Please select a house first.");
+      return;
+    }
 
     try {
       let response = null;
@@ -177,6 +189,7 @@ const Page = () => {
               name="totalRent"
               value={`$${totalRent}`}
               placeholder="Total Rent"
+              onChange={handleInputChange}
               disabled
             />
 

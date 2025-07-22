@@ -10,6 +10,7 @@ import {
   getAllHousesStart,
   getAllHousesSuccess,
   setActiveHouse,
+  setPrefetchHouses,
 } from "@/redux/slices/houseSlice";
 import { RootState } from "@/redux/store";
 import { logoutUser } from "@/services/authServices";
@@ -32,7 +33,7 @@ const MainNavbar = () => {
   const { user, isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
-  const { houses, activeHouse } = useSelector(
+  const { houses, activeHouse, prefetchHouses } = useSelector(
     (state: RootState) => state.house
   );
   const [toggleDropdown, setToggleDropdown] = useState(false);
@@ -71,10 +72,11 @@ const MainNavbar = () => {
       }
     };
 
-    if (isAuthenticated) {
+    if (isAuthenticated || prefetchHouses) {
       fetchHouses();
+      dispatch(setPrefetchHouses(false));
     }
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch, isAuthenticated, prefetchHouses]);
 
   const handleLogout = async () => {
     try {
@@ -112,7 +114,7 @@ const MainNavbar = () => {
               </li>
             </div>
             <div
-              className={`fixed md:relative top-0 left-0 z-50 bg-primary h-dvh w-[min(300px,100%)] md:w-auto md:h-auto md:flex items-center gap-7 border-r-2 md:border-0 border-white/20 transition-transform duration-300 ease-in-out ${
+              className={`fixed md:relative top-0 left-0 z-40 bg-primary h-dvh w-[min(300px,100%)] md:w-auto md:h-auto md:flex items-center gap-7 border-r-2 md:border-0 border-white/20 transition-transform duration-300 ease-in-out ${
                 isOpenNav
                   ? "translate-x-0"
                   : "-translate-x-full md:-translate-0"
@@ -141,47 +143,49 @@ const MainNavbar = () => {
                 </li>
 
                 {isAuthenticated && houses.length > 0 && (
-                  <li>
-                    <Link
-                      onClick={() => setIsOpenNav(false)}
-                      href={"/my-house"}
-                      className={`${
-                        pathname.toLowerCase() === "/my-house"
-                          ? "font-semibold text-white"
-                          : "text-white/50 hover:text-white"
-                      } transition-colors duration-200`}
-                    >
-                      My House
-                    </Link>
-                  </li>
-                )}
+                  <>
+                    <li>
+                      <Link
+                        onClick={() => setIsOpenNav(false)}
+                        href={"/my-house"}
+                        className={`${
+                          pathname.toLowerCase() === "/my-house"
+                            ? "font-semibold text-white"
+                            : "text-white/50 hover:text-white"
+                        } transition-colors duration-200`}
+                      >
+                        My House
+                      </Link>
+                    </li>
 
-                <li>
-                  <Link
-                    onClick={() => setIsOpenNav(false)}
-                    href={"/members"}
-                    className={`${
-                      pathname.toLowerCase() === "/members"
-                        ? "font-semibold text-white"
-                        : "text-white/50 hover:text-white"
-                    } transition-colors duration-200`}
-                  >
-                    Members
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    onClick={() => setIsOpenNav(false)}
-                    href={"/rents"}
-                    className={`${
-                      pathname.toLowerCase() === "/rents"
-                        ? "font-semibold text-white"
-                        : "text-white/50 hover:text-white"
-                    } transition-colors duration-200`}
-                  >
-                    Rents
-                  </Link>
-                </li>
+                    <li>
+                      <Link
+                        onClick={() => setIsOpenNav(false)}
+                        href={"/members"}
+                        className={`${
+                          pathname.toLowerCase() === "/members"
+                            ? "font-semibold text-white"
+                            : "text-white/50 hover:text-white"
+                        } transition-colors duration-200`}
+                      >
+                        Members
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        onClick={() => setIsOpenNav(false)}
+                        href={"/rents"}
+                        className={`${
+                          pathname.toLowerCase() === "/rents"
+                            ? "font-semibold text-white"
+                            : "text-white/50 hover:text-white"
+                        } transition-colors duration-200`}
+                      >
+                        Rents
+                      </Link>
+                    </li>
+                  </>
+                )}
               </div>
             </div>
             <li>

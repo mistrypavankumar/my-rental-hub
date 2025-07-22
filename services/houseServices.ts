@@ -51,6 +51,18 @@ export async function updateHouse(houseId: string, formData: HouseRequest) {
   }
 }
 
+export async function deleteHouse(houseId: string) {
+  try {
+    const res = await axios.delete(`/api/v1/houses/${houseId}`, {
+      withCredentials: true,
+    });
+
+    return res;
+  } catch (err) {
+    throw err;
+  }
+}
+
 export async function createMember(formData: MemberProps) {
   try {
     const res = await axios.post("/api/v1/houses/member", formData, {

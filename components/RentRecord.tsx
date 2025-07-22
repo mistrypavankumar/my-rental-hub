@@ -1,7 +1,8 @@
 import { RentProps } from "@/lib/constants";
 import { showErrorMessage } from "@/lib/utils";
 import { deleteRentById, getRentsByHouseId } from "@/services/houseServices";
-import React, { useEffect } from "react";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 const RentRecord = ({
@@ -9,11 +10,12 @@ const RentRecord = ({
   setFormData,
   setFormMode,
 }: {
-  activeHouse?: { houseName: string; houseId: string };
+  activeHouse?: { houseName: string; houseId: string; defaultPrice: number };
   setFormData: React.Dispatch<React.SetStateAction<RentProps>>;
   setFormMode: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const [rentData, setRentData] = React.useState<RentProps[]>([]);
+  const [undo, setUndo] = useState<string>("");
 
   useEffect(() => {
     const fetchRents = async () => {
@@ -38,9 +40,24 @@ const RentRecord = ({
   const handleEditMember = (rentId: string) => {
     const rent = rentData.find((r) => r._id === rentId);
 
-    console.log(rent);
-
     if (rent) {
+      if (undo) {
+        setUndo("");
+        setFormMode("create");
+        setFormData({
+          _id: rent._id,
+          houseId: activeHouse?.houseId || "",
+          month: new Date().toISOString().split("T")[0],
+          houseRent: activeHouse?.defaultPrice || 0,
+          gas: 0,
+          electricity: 0,
+          internet: 0,
+          water: 0,
+          totalRent: 0,
+        });
+        return;
+      }
+
       setFormData({
         _id: rent._id,
         houseId: activeHouse?.houseId || "",
@@ -53,6 +70,7 @@ const RentRecord = ({
         totalRent: rent.totalRent,
       });
       setFormMode("edit");
+      setUndo(rent._id!);
     }
   };
 
@@ -105,9 +123,16 @@ const RentRecord = ({
                     className="hover:underline cursor-pointer text-blue-600 font-medium"
                     onClick={() => handleEditMember(rent._id!)}
                   >
-                    Edit
+                    {undo === rent._id ? "Undo" : "Edit"}
                   </p>{" "}
                   |{" "}
+                  <Link
+                    href={`/rents/${rent._id}/manage`}
+                    className="hover:underline cursor-pointer text-blue-600 font-medium"
+                  >
+                    Manage Rent
+                  </Link>{" "}
+                  |
                   <p
                     className="hover:underline cursor-pointer text-red-500 font-medium"
                     onClick={() => handleDeleteMember(rent._id!)}

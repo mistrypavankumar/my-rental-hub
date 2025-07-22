@@ -12,6 +12,7 @@ interface HouseState {
       }
     | undefined;
   error: string | null;
+  prefetchHouses?: boolean;
 }
 
 const initialState: HouseState = {
@@ -19,6 +20,7 @@ const initialState: HouseState = {
   loading: false,
   error: null,
   activeHouse: undefined,
+  prefetchHouses: false,
 };
 
 const houseSlice = createSlice({
@@ -44,6 +46,10 @@ const houseSlice = createSlice({
     setActiveHouse(state, action) {
       state.activeHouse = action.payload;
     },
+
+    setPrefetchHouses(state, action) {
+      state.prefetchHouses = action.payload;
+    },
   },
 });
 
@@ -52,5 +58,6 @@ export const {
   getAllHousesSuccess,
   getAllHousesFailure,
   setActiveHouse,
+  setPrefetchHouses,
 } = houseSlice.actions;
 export default houseSlice.reducer;

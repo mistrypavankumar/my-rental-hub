@@ -48,11 +48,11 @@ const Page = () => {
 
   return (
     <div className="w-[90%] mx-auto my-10">
-      <div>
-        <h1 className="text-2xl font-bold">My House</h1>
-        <p className="text-gray-600 mb-10">
-          Manage your existing house details.
-        </p>
+      <div className="flex items-center justify-between mb-10">
+        <div>
+          <h1 className="text-2xl font-bold">My House</h1>
+          <p className="text-gray-600">Manage your existing house details.</p>
+        </div>
       </div>
       <div className="flex flex-col md:flex-row items-center justify-around gap-10">
         <div className="w-full md:max-w-[600px]">

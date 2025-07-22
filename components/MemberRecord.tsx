@@ -16,6 +16,7 @@ const MemberRecord = ({
   setFormMode: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const [memberData, setMemberData] = useState<MemberProps[]>([]);
+  const [undo, setUndo] = useState<string>("");
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -54,6 +55,21 @@ const MemberRecord = ({
   const handleEditMember = (memberId: string) => {
     const member = memberData.find((m) => m._id === memberId);
     if (member) {
+      if (undo) {
+        setUndo("");
+        setFormMode("create");
+        setFormData({
+          _id: "",
+          name: "",
+          email: "",
+          phone: "",
+          houseId: activeHouse?.houseId || "",
+          role: "tenant",
+          stayInSharedRoom: false,
+        });
+        return;
+      }
+
       setFormData({
         _id: member._id,
         name: member.name,
@@ -65,6 +81,7 @@ const MemberRecord = ({
       });
 
       setFormMode("edit");
+      setUndo(member._id!);
     }
   };
 
@@ -106,7 +123,7 @@ const MemberRecord = ({
                     className="hover:underline cursor-pointer text-blue-600 font-medium"
                     onClick={() => handleEditMember(member._id!)}
                   >
-                    Edit
+                    {undo === member._id ? "Undo" : "Edit"}
                   </p>{" "}
                   |{" "}
                   <p
