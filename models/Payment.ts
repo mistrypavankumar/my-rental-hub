@@ -6,6 +6,7 @@ const paymentSchema = new mongoose.Schema({
     ref: "Member",
     required: true,
   },
+
   houseId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "House",

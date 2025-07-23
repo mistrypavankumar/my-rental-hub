@@ -101,3 +101,23 @@ export interface HouseRequest {
   singleRoomRent: number;
   sharedRoomRent: number;
 }
+
+export interface PaymentProps {
+  _id?: string;
+  memberId: string;
+  houseId: string;
+  rentId: string;
+  houseRent: number;
+  gas: number;
+  electricity: number;
+  internet: number;
+  water: number;
+  totalRent?: number;
+  paidAmount?: number;
+  remainingAmount: number;
+  paid: boolean;
+  paidDate?: string; // ISO string format
+  notified?: boolean;
+  createdAt?: string; // ISO string format
+  __v?: number;
+}

@@ -4,6 +4,7 @@ import { deleteRentById, getRentsByHouseId } from "@/services/houseServices";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import ModalToGeneratePayment from "./ModalToGeneratePayment";
 
 const RentRecord = ({
   activeHouse,
@@ -16,6 +17,10 @@ const RentRecord = ({
 }) => {
   const [rentData, setRentData] = React.useState<RentProps[]>([]);
   const [undo, setUndo] = useState<string>("");
+  const [rentId, setRentId] = useState<string>("");
+  const [monthRentData, setMonthRentData] = useState<RentProps | null>(null);
+
+  const [openModel, setOpenModel] = useState(false);
 
   useEffect(() => {
     const fetchRents = async () => {
@@ -90,6 +95,16 @@ const RentRecord = ({
 
   return (
     <>
+      {openModel && (
+        <ModalToGeneratePayment
+          rentData={monthRentData}
+          month={new Date().toLocaleString("default", { month: "long" })}
+          setOpenModel={setOpenModel}
+          activeHouse={activeHouse}
+          rentId={rentId}
+        />
+      )}
+
       <div className="mb-6">
         <h1 className="text-2xl font-bold">
           Rent Records of {activeHouse?.houseName || "Unknown House"} -{" "}
@@ -127,7 +142,12 @@ const RentRecord = ({
                   </p>{" "}
                   |{" "}
                   <Link
-                    href={`/rents/${rent._id}/manage`}
+                    href={"#"}
+                    onClick={() => {
+                      setOpenModel(true);
+                      setRentId(rent._id!);
+                      setMonthRentData(rent);
+                    }}
                     className="hover:underline cursor-pointer text-blue-600 font-medium"
                   >
                     Manage Rent

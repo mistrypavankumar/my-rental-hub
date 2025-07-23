@@ -1,27 +1,37 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const initialRentData = [
   {
-    name: "Alice Johnson",
-    houseRent: 1000,
-    gas: 100,
-    electricity: 200,
-    internet: 80,
-    water: 50,
-    paidAmount: 1430,
-    isPaid: true,
+    memberId: "64d2f6a5a4567c001234abcd",
+    houseId: "64d2f6c3a4567c001234efgh",
+    rentId: "64d2f6e8a4567c001234ijkl",
+    houseRent: 500,
+    gas: 40,
+    electricity: 60,
+    internet: 30,
+    water: 20,
+    totalRent: 650,
+    paidAmount: 300,
+    remainingAmount: 350,
+    paid: false,
+    notified: false,
   },
   {
-    name: "Bob Smith",
-    houseRent: 700,
-    gas: 100,
-    electricity: 200,
-    internet: 80,
-    water: 50,
-    paidAmount: 800,
-    isPaid: false,
+    memberId: "64d2f6a5a4567c001234mnop",
+    houseId: "64d2f6c3a4567c001234qrst",
+    rentId: "64d2f6e8a4567c001234uvwx",
+    houseRent: 600,
+    gas: 50,
+    electricity: 70,
+    internet: 40,
+    water: 30,
+    totalRent: 790,
+    paidAmount: 400,
+    remainingAmount: 390,
+    paid: false,
+    notified: false,
   },
 ];
 
@@ -29,6 +39,9 @@ const Page = () => {
   const [singleRoomRent, setSingleRoomRent] = useState(1000);
   const [sharedRoomRent, setSharedRoomRent] = useState(700);
   const [rentData, setRentData] = useState(initialRentData);
+  const [isSelectMemberId, setIsSelectMemberId] = useState<string>("");
+
+  useEffect(() => {});
 
   const handlePaidAmountChange = (index: number, value: number) => {
     const updated = [...rentData];
@@ -53,6 +66,8 @@ const Page = () => {
       (member.water ?? 0)
     );
   };
+
+  console.log(isSelectMemberId);
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -92,6 +107,7 @@ const Page = () => {
       <table className="w-full border border-gray-300 text-sm">
         <thead className="bg-gray-100">
           <tr>
+            <th className="p-2 border">Select</th>
             <th className="p-2 border">Member Name</th>
             <th className="p-2 border">House Rent</th>
             <th className="p-2 border">Gas</th>
@@ -112,7 +128,15 @@ const Page = () => {
 
             return (
               <tr key={index} className="text-center">
-                <td className="p-2 border">{member.name}</td>
+                <td className="p-2 border">
+                  <input
+                    type="checkbox"
+                    className="form-checkbox"
+                    checked={isSelectMemberId === member.memberId || false}
+                    onChange={() => setIsSelectMemberId(member.memberId)}
+                  />
+                </td>
+                <td className="p-2 border">User Name</td>
                 <td className="p-2 border">₹{member.houseRent}</td>
                 <td className="p-2 border">₹{member.gas}</td>
                 <td className="p-2 border">₹{member.electricity}</td>
