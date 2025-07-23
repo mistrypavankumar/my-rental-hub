@@ -49,3 +49,11 @@ export const getObjectFromLocalStorage = (key: string) => {
   }
   return null;
 };
+
+export const convertDollarsToCents = (value: number) => {
+  return Math.round(value * 100);
+};
+
+export const convertCentsToDollars = (value: number) => {
+  return Number((value / 100).toFixed(2));
+};

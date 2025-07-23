@@ -3,7 +3,7 @@
 import CreateHouseForm from "@/components/CreateHouseForm";
 import Loader from "@/components/Loader/Loader";
 import { House } from "@/lib/constants";
-import { showErrorMessage } from "@/lib/utils";
+import { convertCentsToDollars, showErrorMessage } from "@/lib/utils";
 import { houseImg } from "@/public/assets";
 import { RootState } from "@/redux/store";
 import { getHouseById } from "@/services/houseServices";
@@ -58,7 +58,10 @@ const Page = () => {
         <div className="w-full md:max-w-[600px]">
           <CreateHouseForm
             submitLabel="Update House"
-            initialFormData={initialFormData as House}
+            initialFormData={{
+              ...initialFormData,
+              defaultPrice: convertCentsToDollars(initialFormData.defaultPrice),
+            }}
           />
         </div>
         <div className="w-fit flex items-center justify-center">

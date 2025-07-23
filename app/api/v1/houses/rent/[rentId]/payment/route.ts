@@ -71,6 +71,12 @@ export async function POST(
         body.electricity +
         body.internet +
         body.water,
+      remainingAmount:
+        body.houseRent +
+        body.gas +
+        body.electricity +
+        body.internet +
+        body.water,
     });
 
     const savedPayment = await newPayment.save();

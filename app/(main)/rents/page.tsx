@@ -3,7 +3,11 @@
 import CustomInputField from "@/components/CustomInputField";
 import RentRecord from "@/components/RentRecord";
 import { RentProps } from "@/lib/constants";
-import { showErrorMessage } from "@/lib/utils";
+import {
+  convertCentsToDollars,
+  convertDollarsToCents,
+  showErrorMessage,
+} from "@/lib/utils";
 import { RootState } from "@/redux/store";
 import { createRent, updateRentById } from "@/services/houseServices";
 import React, { useEffect, useState } from "react";
@@ -39,7 +43,7 @@ const Page = () => {
         ...prev,
         houseId: activeHouse?.houseId,
         month: currentMonthDate,
-        houseRent: activeHouse?.defaultPrice || 0,
+        houseRent: convertCentsToDollars(activeHouse?.defaultPrice) || 0,
       }));
     }
   }, [activeHouse, currentMonthDate]);
@@ -53,17 +57,19 @@ const Page = () => {
     }));
   };
 
-  const totalRent =
-    Number(formData.houseRent) +
-    Number(formData.gas) +
-    Number(formData.electricity) +
-    Number(formData.internet) +
-    Number(formData.water);
+  const sumOfExpenses =
+    Number(convertDollarsToCents(formData.houseRent)) +
+    Number(convertDollarsToCents(formData.gas)) +
+    Number(convertDollarsToCents(formData.electricity)) +
+    Number(convertDollarsToCents(formData.internet)) +
+    Number(convertDollarsToCents(formData.water));
+
+  const totalRent = convertCentsToDollars(sumOfExpenses);
 
   useEffect(() => {
     setFormData((prev) => ({
       ...prev,
-      totalRent: totalRent,
+      totalRent: totalRent || 0,
     }));
   }, [totalRent, activeHouse]);
 
@@ -100,7 +106,7 @@ const Page = () => {
       setFormData({
         houseId: activeHouse?.houseId || "",
         month: currentMonthDate,
-        houseRent: activeHouse?.defaultPrice || 0,
+        houseRent: convertCentsToDollars(activeHouse?.defaultPrice) || 0,
         gas: 0,
         electricity: 0,
         internet: 0,

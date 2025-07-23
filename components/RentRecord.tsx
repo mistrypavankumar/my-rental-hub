@@ -1,5 +1,5 @@
 import { RentProps } from "@/lib/constants";
-import { showErrorMessage } from "@/lib/utils";
+import { convertCentsToDollars, showErrorMessage } from "@/lib/utils";
 import { deleteRentById, getRentsByHouseId } from "@/services/houseServices";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
@@ -53,7 +53,7 @@ const RentRecord = ({
           _id: rent._id,
           houseId: activeHouse?.houseId || "",
           month: new Date().toISOString().split("T")[0],
-          houseRent: activeHouse?.defaultPrice || 0,
+          houseRent: convertCentsToDollars(activeHouse!.defaultPrice) || 0,
           gas: 0,
           electricity: 0,
           internet: 0,
@@ -148,7 +148,7 @@ const RentRecord = ({
                       setRentId(rent._id!);
                       setMonthRentData(rent);
                     }}
-                    className="hover:underline cursor-pointer text-blue-600 font-medium"
+                    className="hover:underline text-nowrap cursor-pointer text-blue-600 font-medium"
                   >
                     Manage Rent
                   </Link>{" "}

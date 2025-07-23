@@ -114,7 +114,7 @@ export interface PaymentProps {
   water: number;
   totalRent?: number;
   paidAmount?: number;
-  remainingAmount: number;
+  remainingAmount?: number;
   paid: boolean;
   paidDate?: string; // ISO string format
   notified?: boolean;

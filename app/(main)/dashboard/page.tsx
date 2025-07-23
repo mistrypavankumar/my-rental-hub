@@ -1,5 +1,6 @@
 "use client";
 
+import { convertCentsToDollars } from "@/lib/utils";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -29,7 +30,7 @@ const Page = () => {
       setAnalysisData({
         totalRooms: activeHouseDetails.rooms || 0,
         totalMembers: activeHouseDetails.tenants?.length || 0,
-        totalRent: activeHouseDetails.defaultPrice || 0,
+        totalRent: convertCentsToDollars(activeHouseDetails.defaultPrice) || 0,
       });
     }
   }, [activeHouseDetails, router]);

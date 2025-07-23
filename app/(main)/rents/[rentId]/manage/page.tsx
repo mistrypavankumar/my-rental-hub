@@ -1,181 +1,215 @@
 "use client";
 
+import Loader from "@/components/Loader/Loader";
+import { MemberProps, PaymentProps, RentProps } from "@/lib/constants";
+import {
+  convertCentsToDollars,
+  convertDollarsToCents,
+  showErrorMessage,
+} from "@/lib/utils";
+import { getMembersByHouseId } from "@/services/houseServices";
+import { getPaymentsByRentId, getRentByRentId } from "@/services/rentServices";
+import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
-const initialRentData = [
-  {
-    memberId: "64d2f6a5a4567c001234abcd",
-    houseId: "64d2f6c3a4567c001234efgh",
-    rentId: "64d2f6e8a4567c001234ijkl",
-    houseRent: 500,
-    gas: 40,
-    electricity: 60,
-    internet: 30,
-    water: 20,
-    totalRent: 650,
-    paidAmount: 300,
-    remainingAmount: 350,
-    paid: false,
-    notified: false,
-  },
-  {
-    memberId: "64d2f6a5a4567c001234mnop",
-    houseId: "64d2f6c3a4567c001234qrst",
-    rentId: "64d2f6e8a4567c001234uvwx",
-    houseRent: 600,
-    gas: 50,
-    electricity: 70,
-    internet: 40,
-    water: 30,
-    totalRent: 790,
-    paidAmount: 400,
-    remainingAmount: 390,
-    paid: false,
-    notified: false,
-  },
-];
+import toast from "react-hot-toast";
 
 const Page = () => {
-  const [singleRoomRent, setSingleRoomRent] = useState(1000);
-  const [sharedRoomRent, setSharedRoomRent] = useState(700);
-  const [rentData, setRentData] = useState(initialRentData);
+  const params = useParams();
+
+  const [rentData, setRentData] = useState<RentProps>();
+  const [rentPaymentData, setRentPaymentData] = useState<PaymentProps[]>([]);
   const [isSelectMemberId, setIsSelectMemberId] = useState<string>("");
+  const [membersData, setMembersData] = useState<MemberProps[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {});
+  useEffect(() => {
+    const fetchPaymentData = async () => {
+      try {
+        if (!params.rentId) {
+          toast.error("No rent ID found in local storage");
+          return;
+        }
 
-  const handlePaidAmountChange = (index: number, value: number) => {
-    const updated = [...rentData];
-    updated[index].paidAmount = value;
-    updated[index].isPaid = value >= calculateTotal(updated[index]);
-    setRentData(updated);
+        const response = await Promise.all([
+          getPaymentsByRentId(params?.rentId as string),
+          getRentByRentId(params.rentId as string),
+        ]);
+
+        if (response[0].status !== 200 || response[1].status !== 200) {
+          throw new Error("Failed to fetch rent or payment data");
+        }
+
+        setRentPaymentData(response[0].data.payments);
+        setRentData(response[1].data.rent);
+      } catch (error) {
+        showErrorMessage(error as Error);
+      }
+    };
+
+    fetchPaymentData();
+  }, [params.rentId]);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const response = await getMembersByHouseId(rentData?.houseId || "");
+
+        if (response.status !== 200) {
+          throw new Error("Failed to fetch members");
+        }
+
+        setMembersData(response.data.members as MemberProps[]);
+      } catch (error) {
+        console.error("Error fetching member name:", error);
+        return "Unknown Member";
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (rentData?.houseId) {
+      fetchMembers();
+    }
+  }, [rentData?.houseId]);
+
+  const sumOfHouseRent = () => {
+    return rentPaymentData.reduce((total, member) => {
+      return total + (convertDollarsToCents(member.houseRent) || 0);
+    }, 0);
   };
 
-  const handleFullPaid = (index: number) => {
-    const updated = [...rentData];
-    updated[index].paidAmount = calculateTotal(updated[index]);
-    updated[index].isPaid = true;
-    setRentData(updated);
+  const sumOfGas = () => {
+    return rentPaymentData.reduce((total, member) => {
+      return total + (convertDollarsToCents(member.gas) || 0);
+    }, 0);
   };
 
-  const calculateTotal = (member: (typeof rentData)[number]) => {
-    return (
-      member.houseRent +
-      member.gas +
-      member.electricity +
-      (member.internet ?? 0) +
-      (member.water ?? 0)
-    );
+  const sumOfElectricity = () => {
+    return rentPaymentData.reduce((total, member) => {
+      return total + (convertDollarsToCents(member.electricity) || 0);
+    }, 0);
   };
 
-  console.log(isSelectMemberId);
+  const sumOfInternet = () => {
+    return rentPaymentData.reduce((total, member) => {
+      return total + (convertDollarsToCents(member.internet) || 0);
+    }, 0);
+  };
+
+  const sumOfWater = () => {
+    return rentPaymentData.reduce((total, member) => {
+      return total + (convertDollarsToCents(member.water) || 0);
+    }, 0);
+  };
+
+  const totalRent =
+    sumOfHouseRent() +
+    sumOfGas() +
+    sumOfElectricity() +
+    sumOfInternet() +
+    sumOfWater();
+
+  const sumOfRemainingAmounts = () => {
+    return rentPaymentData.reduce((total, member) => {
+      return total + (convertDollarsToCents(member.remainingAmount!) || 0);
+    }, 0);
+  };
+
+  const getMemberNameById = (memberId: string) => {
+    const member = membersData.find((m) => m._id === memberId);
+    return member ? member.name : "Unknown Member";
+  };
+
+  const handleSelectMember = (memberId: string) => {
+    if (isSelectMemberId === memberId) {
+      setIsSelectMemberId("");
+    } else {
+      setIsSelectMemberId(memberId);
+    }
+  };
+
+  if (loading) return <Loader />;
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">Set Room Rent</h2>
-
-      <div className="flex flex-wrap gap-4 mb-10">
-        <div>
-          <label className="block font-medium mb-1">Total House Rent ($)</label>
-          <input
-            type="number"
-            value={singleRoomRent}
-            onChange={(e) => setSingleRoomRent(Number(e.target.value))}
-            className="border px-3 py-2 rounded w-40"
-          />
-        </div>
-        <div>
-          <label className="block font-medium mb-1">Single Room Rent (₹)</label>
-          <input
-            type="number"
-            value={singleRoomRent}
-            onChange={(e) => setSingleRoomRent(Number(e.target.value))}
-            className="border px-3 py-2 rounded w-40"
-          />
-        </div>
-        <div>
-          <label className="block font-medium mb-1">Shared Room Rent (₹)</label>
-          <input
-            type="number"
-            value={sharedRoomRent}
-            onChange={(e) => setSharedRoomRent(Number(e.target.value))}
-            className="border px-3 py-2 rounded w-40"
-          />
-        </div>
-      </div>
-
-      <h2 className="text-2xl font-bold mb-4">Member Rent Collection</h2>
+      <h2 className="text-2xl font-bold mb-4">Member Rent Management</h2>
       <table className="w-full border border-gray-300 text-sm">
-        <thead className="bg-gray-100">
+        <thead className="bg-primary-light text-white">
           <tr>
-            <th className="p-2 border">Select</th>
-            <th className="p-2 border">Member Name</th>
-            <th className="p-2 border">House Rent</th>
-            <th className="p-2 border">Gas</th>
-            <th className="p-2 border">Electricity</th>
-            <th className="p-2 border">Internet</th>
-            <th className="p-2 border">Water</th>
-            <th className="p-2 border">Total</th>
-            <th className="p-2 border">Paid Amount</th>
-            <th className="p-2 border">Remaining</th>
-            <th className="p-2 border">Paid</th>
-            <th className="p-2 border">Action</th>
+            <th className="p-4 border">Select</th>
+            <th className="p-4 border">Member Name</th>
+            <th className="p-4 border">House Rent</th>
+            <th className="p-4 border">Gas</th>
+            <th className="p-4 border">Electricity</th>
+            <th className="p-4 border">Internet</th>
+            <th className="p-4 border">Water</th>
+            <th className="p-4 border">Total</th>
+            <th className="p-4 border">Remaining</th>
+            <th className="p-4 border">Paid</th>
           </tr>
         </thead>
         <tbody>
-          {rentData.map((member, index) => {
-            const total = calculateTotal(member);
-            const remaining = total - member.paidAmount;
+          {rentPaymentData.map((member, index) => {
+            const memberName = getMemberNameById(member.memberId);
 
             return (
               <tr key={index} className="text-center">
                 <td className="p-2 border">
                   <input
                     type="checkbox"
-                    className="form-checkbox"
+                    className="w-4 h-4"
                     checked={isSelectMemberId === member.memberId || false}
-                    onChange={() => setIsSelectMemberId(member.memberId)}
+                    onChange={() => handleSelectMember(member.memberId)}
                   />
                 </td>
-                <td className="p-2 border">User Name</td>
-                <td className="p-2 border">₹{member.houseRent}</td>
-                <td className="p-2 border">₹{member.gas}</td>
-                <td className="p-2 border">₹{member.electricity}</td>
-                <td className="p-2 border">₹{member.internet}</td>
-                <td className="p-2 border">₹{member.water}</td>
-                <td className="p-2 border font-semibold">₹{total}</td>
-                <td className="p-2 border">
-                  <input
-                    type="number"
-                    value={member.paidAmount}
-                    onChange={(e) =>
-                      handlePaidAmountChange(index, Number(e.target.value))
-                    }
-                    className="border px-2 py-1 w-24"
-                  />
+                <td className="p-2 border text-left">{memberName}</td>
+                <td className="p-2 border">${member.houseRent}</td>
+                <td className="p-2 border">${member.gas}</td>
+                <td className="p-2 border">${member.electricity}</td>
+                <td className="p-2 border">${member.internet}</td>
+                <td className="p-2 border">${member.water}</td>
+                <td className="p-2 border font-semibold">
+                  ${member.totalRent}
                 </td>
-                <td className="p-2 border text-red-600">
-                  ₹{remaining > 0 ? remaining : 0}
+                <td className="p-2 border text-red-600 font-semibold">
+                  ${member.remainingAmount}
                 </td>
                 <td className="p-2 border">
-                  {member.isPaid ? (
+                  {member.paid ? (
                     <span className="text-green-600 font-semibold">Yes</span>
                   ) : (
                     <span className="text-yellow-600 font-semibold">No</span>
                   )}
                 </td>
-                <td className="p-2 border">
-                  {!member.isPaid && (
-                    <button
-                      onClick={() => handleFullPaid(index)}
-                      className="bg-blue-600 text-white px-2 py-1 rounded text-xs"
-                    >
-                      Full Paid
-                    </button>
-                  )}
-                </td>
               </tr>
             );
           })}
+          <tr>
+            <td className="p-2 border"></td>
+            <td className="p-2 border"></td>
+            <td className="p-2 border text-center font-bold">
+              ${convertCentsToDollars(sumOfHouseRent())}
+            </td>
+            <td className="p-2 border text-center font-bold">
+              ${convertCentsToDollars(sumOfGas())}
+            </td>
+            <td className="p-2 border text-center font-bold">
+              ${convertCentsToDollars(sumOfElectricity())}
+            </td>
+            <td className="p-2 border text-center font-bold">
+              ${convertCentsToDollars(sumOfInternet())}
+            </td>
+            <td className="p-2 border text-center font-bold">
+              ${convertCentsToDollars(sumOfWater())}
+            </td>
+            <td className="p-2 border text-center font-bold">
+              ${convertCentsToDollars(totalRent)}
+            </td>
+            <td className="p-2 border text-center font-bold text-red-600">
+              ${convertCentsToDollars(sumOfRemainingAmounts())}
+            </td>
+            <td className="p-2 border text-center"></td>
+          </tr>
         </tbody>
       </table>
     </div>

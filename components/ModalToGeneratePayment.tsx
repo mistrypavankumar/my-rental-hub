@@ -1,19 +1,25 @@
 "use client";
 
 import { PaymentProps, RentProps } from "@/lib/constants";
-import { setInLocalStorage } from "@/lib/utils";
+import {
+  convertCentsToDollars,
+  convertDollarsToCents,
+  setInLocalStorage,
+} from "@/lib/utils";
 import { generatePayment, getPaymentsByRentId } from "@/services/rentServices";
 import React, { useEffect, useState } from "react";
 import { RiLoader5Fill } from "react-icons/ri";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
+import { IoClose } from "react-icons/io5";
 
 const ModalToGeneratePayment = ({
   rentData,
   month,
   rentId,
   activeHouse,
+  setOpenModel,
 }: {
   rentData: RentProps | null;
   month: string;
@@ -69,14 +75,21 @@ const ModalToGeneratePayment = ({
       }
 
       const houseRentSplit =
-        rentData!.houseRent / activeHouseMembers.length || 0;
+        convertDollarsToCents(
+          rentData!.houseRent / activeHouseMembers.length
+        ) || 0;
 
-      const gasSplit = rentData!.gas / activeHouseMembers!.length || 0;
+      const gasSplit =
+        convertDollarsToCents(rentData!.gas / activeHouseMembers.length) || 0;
       const electricitySplit =
-        rentData!.electricity / activeHouseMembers!.length || 0;
+        convertDollarsToCents(
+          rentData!.electricity / activeHouseMembers.length
+        ) || 0;
       const internetSplit =
-        rentData!.internet / activeHouseMembers!.length || 0;
-      const waterSplit = rentData!.water / activeHouseMembers!.length || 0;
+        convertDollarsToCents(rentData!.internet / activeHouseMembers.length) ||
+        0;
+      const waterSplit =
+        convertDollarsToCents(rentData!.water / activeHouseMembers.length) || 0;
 
       activeHouseMembers.forEach((id) => {
         const paymentDetails = {
@@ -84,14 +97,15 @@ const ModalToGeneratePayment = ({
           memberId: id,
           houseId: activeHouse?.houseId || "",
           month,
-          houseRent: houseRentSplit,
-          gas: gasSplit,
-          electricity: electricitySplit,
-          internet: internetSplit,
-          water: waterSplit,
-          remainingAmount: 0,
+          houseRent: convertCentsToDollars(houseRentSplit),
+          gas: convertCentsToDollars(gasSplit),
+          electricity: convertCentsToDollars(electricitySplit),
+          internet: convertCentsToDollars(internetSplit),
+          water: convertCentsToDollars(waterSplit),
           paid: false,
         };
+
+        setLoading(true);
 
         generatePayment(paymentDetails)
           .then((response) => {
@@ -116,12 +130,12 @@ const ModalToGeneratePayment = ({
         <div>
           <div
             className={`w-[min(500px,90%)] mx-auto mt-20 bg-white p-6 rounded-lg shadow-lg ${
-              paymentData.length > 0 ? "h-[200px] overflow-y-auto" : "h-auto"
+              paymentData.length > 0 ? "h-[200px] overflow-y-auto" : "h-[200px]"
             }`}
           >
             <div className="flex flex-col justify-center items-center h-full">
               <p>Redirecting...</p>
-              <RiLoader5Fill size={50} className="animate-spin" />
+              <RiLoader5Fill size={50} className="animate-spin text-primary" />
             </div>
           </div>
         </div>
@@ -133,15 +147,23 @@ const ModalToGeneratePayment = ({
     <div className="fixed backdrop-blur-md z-40 inset-0 top-0 left-0 bg-primary/80 min-h-screen w-full ">
       <div>
         <div
-          className={`w-[min(500px,90%)] mx-auto mt-20 bg-white p-6 rounded-lg shadow-lg ${
-            paymentData.length > 0 ? "h-[200px] overflow-y-auto" : "h-auto"
+          className={`w-[min(500px,90%)] mx-auto flex flex-col justify-between group relative mt-20 bg-white p-6 rounded-lg shadow-lg ${
+            paymentData.length > 0 ? "h-[200px] overflow-y-auto" : "h-[200px]"
           }`}
         >
-          <h2 className="text-2xl font-bold">Generate {month} Month Payment</h2>
-          <p className="mb-4">
-            Click the button below to generate the payment for the month of{" "}
-            {month}.
-          </p>
+          <IoClose
+            onClick={() => setOpenModel(false)}
+            className="text-2xl absolute top-3 right-6 cursor-pointer hidden group-hover:block transition-all duration-300"
+          />
+
+          <div>
+            <h2 className="text-2xl font-bold">
+              Generate {month} Month Payment
+            </h2>
+            <p className="mb-4">
+              Please review the Rent details before generating the payment.
+            </p>
+          </div>
 
           <button
             onClick={handleGeneratePayment}

@@ -41,6 +41,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No tenants found" }, { status: 404 });
     }
 
+    const existingRent = await Rent.findOne({ month, houseId });
+
+    if (existingRent) {
+      return NextResponse.json(
+        { error: "Rent for this month already exists" },
+        { status: 400 }
+      );
+    }
+
     const rent = await Rent.create({
       month,
       houseId,
@@ -84,7 +93,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const rents = await Rent.find({ houseId }).sort({ month: -1 });
+    const rents = await Rent.find({ houseId }).sort({ createdAt: -1 });
     return NextResponse.json(
       {
         message: "Rents fetched successfully",

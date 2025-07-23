@@ -1,7 +1,43 @@
 import connectToDatabase from "@/lib/db";
+import Payment from "@/models/Payment";
 import Rent from "@/models/Rent";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { rentId: string } }
+) {
+  const rentId = params.rentId;
+
+  await connectToDatabase();
+
+  try {
+    if (!rentId || !mongoose.Types.ObjectId.isValid(rentId)) {
+      return NextResponse.json(
+        { error: "Invalid or missing rentId" },
+        { status: 400 }
+      );
+    }
+
+    const rent = await Rent.findById(rentId);
+
+    if (!rent) {
+      return NextResponse.json(
+        { error: "Rent record not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({ rent }, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching rent:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function PUT(
   request: NextRequest,
@@ -74,7 +110,10 @@ export async function DELETE(
       );
     }
 
+    await Payment.deleteMany({ rentId });
+
     await Rent.findByIdAndDelete(rentId);
+
     return NextResponse.json(
       { message: "Rent record deleted successfully" },
       { status: 200 }

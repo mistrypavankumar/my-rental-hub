@@ -1,6 +1,10 @@
 "use client";
 
-import { setObjectInLocalStorage, showErrorMessage } from "@/lib/utils";
+import {
+  convertDollarsToCents,
+  setObjectInLocalStorage,
+  showErrorMessage,
+} from "@/lib/utils";
 import {
   createHouse,
   deleteHouse,
@@ -62,7 +66,10 @@ const CreateHouseForm = ({
       dispatch(setLoading(true));
 
       if (submitLabel === "Update House") {
-        const response = await updateHouse(formData._id!, formData);
+        const response = await updateHouse(formData._id!, {
+          ...formData,
+          defaultPrice: convertDollarsToCents(formData.defaultPrice),
+        });
 
         if (response.status === 200) {
           toast.success("House is updated successfully");
@@ -70,7 +77,10 @@ const CreateHouseForm = ({
           router.replace("/dashboard");
         }
       } else if (submitLabel === "Create House") {
-        const response = await createHouse(formData);
+        const response = await createHouse({
+          ...formData,
+          defaultPrice: convertDollarsToCents(formData.defaultPrice),
+        });
 
         if (response.status === 201) {
           toast.success("House is created successfully");
@@ -183,9 +193,9 @@ const CreateHouseForm = ({
           name="defaultPrice"
           value={formData.defaultPrice}
           onChange={handleInputChange}
-          placeholder="Default Rent Price"
+          placeholder="Default Rent Price in Cents"
           required
-          label="Default Rent Price"
+          label="Default Rent Price in Cents"
         />
 
         <label className="flex items-center space-x-2 text-sm">
