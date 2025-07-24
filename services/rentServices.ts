@@ -58,3 +58,14 @@ export const updatePayment = async (paymentBody: {
     throw error;
   }
 };
+
+export const getPaymentHistoryByRentId = async (rentId: string) => {
+  try {
+    const res = await axios.get(
+      `/api/v1/houses/rent/${rentId}/payment-history`
+    );
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -80,7 +80,11 @@ const Page = () => {
         setRefreshPage={setRefreshPage}
       />
 
-      <PaymentHistory />
+      <PaymentHistory
+        rentId={params.rentId as string}
+        membersData={membersData}
+        refreshPage={refreshPage}
+      />
     </div>
   );
 };

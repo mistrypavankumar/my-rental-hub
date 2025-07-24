@@ -121,3 +121,13 @@ export interface PaymentProps {
   createdAt?: string; // ISO string format
   __v?: number;
 }
+
+export interface PaymentHistoryProps {
+  paymentId: string;
+  memberId: string;
+  rentId: string;
+  paidAmount: number;
+  remainingAmount: number;
+  createdAt?: string; // ISO string format
+  updatedAt?: string; // ISO string format
+}
