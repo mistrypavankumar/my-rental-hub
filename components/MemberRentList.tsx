@@ -1,28 +1,39 @@
 "use client";
 
 import { MemberProps, PaymentProps } from "@/lib/constants";
-import { convertCentsToDollars, convertDollarsToCents } from "@/lib/utils";
-import React, { useMemo, useState } from "react";
+import {
+  convertCentsToDollars,
+  convertDollarsToCents,
+  showErrorMessage,
+} from "@/lib/utils";
+import { updatePayment } from "@/services/rentServices";
+import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 interface paymentAmountProps {
   amount: string;
   memberId: string;
   paymentId: string;
+  rentId: string;
+  remainingAmount: number;
 }
 
 const MemberRentList = ({
   rentPaymentData,
   membersData,
+  setRefreshPage,
 }: {
   rentPaymentData: PaymentProps[];
   membersData: MemberProps[];
+  setRefreshPage: React.Dispatch<React.SetStateAction<number>>;
 }) => {
   const [isSelectMemberId, setIsSelectMemberId] = useState<string>("");
   const [paymentAmount, setPaymentAmount] = useState<paymentAmountProps>({
     amount: "",
     memberId: "",
+    rentId: rentPaymentData[0]?.rentId || "",
     paymentId: "",
+    remainingAmount: 0,
   });
 
   const sumOfHouseRent = useMemo(() => {
@@ -81,6 +92,8 @@ const MemberRentList = ({
         amount: "",
         memberId: "",
         paymentId: "",
+        rentId: rentPaymentData[0]?.rentId || "",
+        remainingAmount: 0,
       });
     } else {
       setIsSelectMemberId(memberId);
@@ -93,6 +106,8 @@ const MemberRentList = ({
           amount: selectedMember?.remainingAmount?.toString() || "",
           memberId: memberId,
           paymentId: paymentId,
+          rentId: selectedMember.rentId,
+          remainingAmount: selectedMember.remainingAmount || 0,
         });
       }
     }
@@ -102,6 +117,57 @@ const MemberRentList = ({
     if (!paymentAmount.memberId || !paymentAmount.paymentId) {
       toast.error("Please select a member to update payment");
       return;
+    }
+
+    const amount = Number(paymentAmount.amount);
+
+    if (isNaN(amount) || amount <= 0) {
+      toast.error("Please enter a valid payment amount");
+      return;
+    }
+
+    const selectedMember = rentPaymentData.find(
+      (member) => member.memberId === paymentAmount.memberId
+    );
+
+    if (!selectedMember) {
+      toast.error("Selected member not found");
+      return;
+    }
+
+    if (amount > selectedMember.remainingAmount!) {
+      toast.error("Payment amount cannot be greater than remaining amount");
+      return;
+    }
+
+    const remainingAmount =
+      convertDollarsToCents(selectedMember.remainingAmount!) -
+      convertDollarsToCents(amount);
+
+    try {
+      const res = await updatePayment({
+        paymentId: paymentAmount.paymentId,
+        memberId: paymentAmount.memberId,
+        rentId: paymentAmount.rentId,
+        paidAmount: amount,
+        remainingAmount: convertCentsToDollars(remainingAmount),
+      });
+
+      if (res.status === 200) {
+        toast.success("Payment updated successfully");
+        setIsSelectMemberId("");
+        setPaymentAmount({
+          amount: "",
+          memberId: "",
+          paymentId: "",
+          rentId: rentPaymentData[0]?.rentId || "",
+          remainingAmount: 0,
+        });
+
+        setRefreshPage((prev) => prev + 1); // Trigger a refresh of the page
+      }
+    } catch (error) {
+      showErrorMessage(error as Error);
     }
   };
 

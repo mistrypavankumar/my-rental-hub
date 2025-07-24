@@ -18,6 +18,7 @@ const Page = () => {
   const [rentPaymentData, setRentPaymentData] = useState<PaymentProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [membersData, setMembersData] = useState<MemberProps[]>([]);
+  const [refreshPage, setRefreshPage] = useState<number>(0);
 
   useEffect(() => {
     const fetchPaymentData = async () => {
@@ -44,7 +45,7 @@ const Page = () => {
     };
 
     fetchPaymentData();
-  }, [params.rentId]);
+  }, [params.rentId, refreshPage]);
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -76,6 +77,7 @@ const Page = () => {
       <MemberRentList
         rentPaymentData={rentPaymentData}
         membersData={membersData}
+        setRefreshPage={setRefreshPage}
       />
 
       <PaymentHistory />

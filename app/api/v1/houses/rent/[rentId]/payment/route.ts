@@ -1,5 +1,6 @@
 import connectToDatabase from "@/lib/db";
 import Payment from "@/models/Payment";
+import PaymentHistory from "@/models/PaymentHistory";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -86,6 +87,82 @@ export async function POST(
     return NextResponse.json(
       {
         error: "Failed to create payment",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  const { paymentId, memberId, rentId, paidAmount, remainingAmount } =
+    await request.json();
+  await connectToDatabase();
+
+  try {
+    if (!paymentId || !mongoose.Types.ObjectId.isValid(paymentId)) {
+      return NextResponse.json(
+        { error: "Invalid payment ID" },
+        { status: 400 }
+      );
+    }
+
+    if (!memberId || !mongoose.Types.ObjectId.isValid(memberId)) {
+      return NextResponse.json({ error: "Invalid member ID" }, { status: 400 });
+    }
+
+    if (!rentId || !mongoose.Types.ObjectId.isValid(rentId)) {
+      return NextResponse.json({ error: "Invalid rent ID" }, { status: 400 });
+    }
+
+    if (typeof paidAmount !== "number" || paidAmount < 0) {
+      return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
+    }
+
+    if (typeof remainingAmount !== "number" || remainingAmount < 0) {
+      return NextResponse.json(
+        { error: "Invalid remaining amount" },
+        { status: 400 }
+      );
+    }
+
+    const payment = await Payment.findOneAndUpdate(
+      {
+        _id: paymentId,
+        memberId,
+        rentId,
+      },
+      {
+        paidAmount: paidAmount,
+        remainingAmount: remainingAmount,
+        paid: remainingAmount <= 0,
+      }
+    );
+
+    if (!payment) {
+      return NextResponse.json(
+        { error: "Payment not found or not updated" },
+        { status: 404 }
+      );
+    }
+
+    await PaymentHistory.create({
+      paymentId: payment._id,
+      memberId,
+      rentId,
+      paidAmount,
+      remainingAmount,
+    });
+
+    if (payment.remainingAmount <= 0) {
+      payment.paid = true;
+    }
+
+    return NextResponse.json({ payment }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error: "Failed to update payment",
         message: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 }

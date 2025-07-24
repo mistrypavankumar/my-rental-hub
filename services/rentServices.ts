@@ -39,3 +39,22 @@ export const getPaymentsByRentId = async (
     throw error;
   }
 };
+
+export const updatePayment = async (paymentBody: {
+  paymentId: string;
+  memberId: string;
+  rentId: string;
+  paidAmount: number;
+  remainingAmount: number;
+}) => {
+  try {
+    const res = await axios.put(
+      `/api/v1/houses/rent/${paymentBody.rentId}/payment`,
+      paymentBody
+    );
+
+    return res;
+  } catch (error) {
+    throw error;
+  }
+};
