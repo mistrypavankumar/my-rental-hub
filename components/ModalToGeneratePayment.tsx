@@ -155,6 +155,21 @@ const ModalToGeneratePayment = ({
 
         setLoading(true);
 
+        // const totalRent =
+        //   paymentDetails.houseRent +
+        //   paymentDetails.gas +
+        //   paymentDetails.electricity +
+        //   paymentDetails.internet +
+        //   paymentDetails.water;
+
+        // allMembers.forEach(async (member) => {
+        //   if (member._id === id) {
+        //     const message = `Hello ${member.name},\n\nYour rent for the month of ${month} is ready. Your rent of this month is $${totalRent}.\n\nThank you!`;
+
+        //     await sendMessageToMember(member.phone, message);
+        //   }
+        // });
+
         generatePayment(paymentDetails)
           .then((response) => {
             if (response.status === 201) {

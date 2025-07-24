@@ -234,10 +234,10 @@ const MemberRentList = ({
                   <td className="p-2 border">${member.internet}</td>
                   <td className="p-2 border">${member.water}</td>
                   <td className="p-2 border font-semibold">
-                    ${member.totalRent}
+                    ${member.totalRent?.toFixed(2)}
                   </td>
                   <td className="p-2 border border-primary text-red-600 font-semibold">
-                    ${member.remainingAmount}
+                    ${member.remainingAmount?.toFixed(2)}
                   </td>
                   <td className="p-2 border">
                     {member.paid ? (

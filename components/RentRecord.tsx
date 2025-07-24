@@ -19,6 +19,7 @@ const RentRecord = ({
   const [undo, setUndo] = useState<string>("");
   const [rentId, setRentId] = useState<string>("");
   const [monthRentData, setMonthRentData] = useState<RentProps | null>(null);
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState(false);
 
   const [openModel, setOpenModel] = useState(false);
 
@@ -87,6 +88,8 @@ const RentRecord = ({
       }
 
       setRentData((prev) => prev.filter((rent) => rent._id !== rentId));
+      setDeleteConfirmModal(false);
+      setRentId("");
       toast.success("Rent record deleted successfully");
     } catch (error) {
       showErrorMessage(error as Error);
@@ -103,6 +106,31 @@ const RentRecord = ({
           activeHouse={activeHouse}
           rentId={rentId}
         />
+      )}
+
+      {deleteConfirmModal && (
+        <div className="fixed top-0 left-0 inset-0 w-full h-full backdrop-blur-sm bg-gray-900/50 bg-opacity-50 z-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-md shadow-md">
+            <h2 className="text-lg font-bold">Delete Rent Record</h2>
+            <p className="text-gray-600 mb-7">
+              Are you sure you want to delete this rent record?
+            </p>
+            <div className="flex justify-end">
+              <button
+                className="bg-primary hover:bg-primary-light transition-colors duration-300 text-white cursor-pointer px-4 py-2 rounded-md mr-2"
+                onClick={() => setDeleteConfirmModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteMember(rentId)}
+                className="bg-red-600 hover:bg-red-700 transition-colors duration-300 text-white cursor-pointer px-4 py-2 rounded-md"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       <div className="mb-6">
@@ -155,7 +183,10 @@ const RentRecord = ({
                   |
                   <p
                     className="hover:underline cursor-pointer text-red-500 font-medium"
-                    onClick={() => handleDeleteMember(rent._id!)}
+                    onClick={() => {
+                      setDeleteConfirmModal(true);
+                      setRentId(rent._id!);
+                    }}
                   >
                     Delete
                   </p>
