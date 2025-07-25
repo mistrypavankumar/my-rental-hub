@@ -37,6 +37,8 @@ export async function GET(request: NextRequest) {
           id: user._id,
           name: user.name,
           email: user.email,
+          role: user.role,
+          houses: user.houses,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
         },
@@ -45,7 +47,10 @@ export async function GET(request: NextRequest) {
     );
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch user" },
+      {
+        error: "Failed to fetch user",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

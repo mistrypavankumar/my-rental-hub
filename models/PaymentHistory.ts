@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const paymentHistorySchema = new mongoose.Schema(
   {
+    houseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "House",
+      required: true,
+    },
     paymentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Payment",

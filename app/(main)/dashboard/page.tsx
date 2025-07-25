@@ -1,5 +1,6 @@
 "use client";
 
+import { PaymentHistoryProps } from "@/lib/constants";
 import { convertCentsToDollars } from "@/lib/utils";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
@@ -25,6 +26,8 @@ const Page = () => {
     totalRent: 0,
   });
 
+  const [History, setHistory] = useState<PaymentHistoryProps[]>([]);
+
   useEffect(() => {
     if (activeHouseDetails) {
       setAnalysisData({
@@ -34,6 +37,29 @@ const Page = () => {
       });
     }
   }, [activeHouseDetails, router]);
+
+  useEffect(() => {
+    const fetchPaymentHistory = async () => {
+      if (!activeHouseDetails) return;
+
+      try {
+        const response = await fetch(
+          `/api/v1/houses/${activeHouseDetails._id}/payment-history`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch payment history");
+        }
+
+        const data = await response.json();
+        setHistory(data.paymentHistory);
+      } catch (error) {
+        console.error("Error fetching payment history:", error);
+      }
+    };
+
+    fetchPaymentHistory();
+  }, [activeHouseDetails]);
 
   const { totalRooms, totalMembers, totalRent } = analysisData;
 
@@ -74,7 +100,7 @@ const Page = () => {
 
         <AnalyticsCard
           title="Total Rents History"
-          value="12"
+          value={History.length.toString()}
           icon={<FaHistory />}
         />
       </div>

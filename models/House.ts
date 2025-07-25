@@ -63,9 +63,6 @@ const houseSchema = new mongoose.Schema(
     singleRoomRent: {
       type: Number,
     },
-    sharedRoomRent: {
-      type: Number,
-    },
     roomStatus: [
       {
         roomNumber: {

@@ -42,6 +42,7 @@ export const getPaymentsByRentId = async (
 
 export const updatePayment = async (paymentBody: {
   paymentId: string;
+  houseId: string;
   memberId: string;
   rentId: string;
   paidAmount: number;

@@ -115,6 +115,7 @@ const CreateHouseForm = ({
 
       if (res.status === 200) {
         toast.success("House deleted successfully");
+        setObjectInLocalStorage("activeHouse", {});
         router.replace("/dashboard");
       }
 
@@ -228,17 +229,16 @@ const CreateHouseForm = ({
           required
         />
 
-        <CustomInputField
-          type="number"
-          name="rooms"
-          value={formData.rooms}
-          onChange={handleInputChange}
-          placeholder="Total Rooms"
-          label="Total Rooms"
-          required
-        />
-
         <div className="grid grid-cols-2 gap-4">
+          <CustomInputField
+            type="number"
+            name="rooms"
+            value={formData.rooms}
+            onChange={handleInputChange}
+            placeholder="Total Rooms"
+            label="Total Rooms"
+            required
+          />
           <CustomInputField
             type="number"
             name="singleRoomRent"
@@ -246,14 +246,6 @@ const CreateHouseForm = ({
             onChange={handleInputChange}
             placeholder="Single Room Rent"
             label="Single Room Rent"
-          />
-          <CustomInputField
-            type="number"
-            name="sharedRoomRent"
-            value={formData.sharedRoomRent}
-            onChange={handleInputChange}
-            placeholder="Shared Room Rent"
-            label="Shared Room Rent"
           />
         </div>
 

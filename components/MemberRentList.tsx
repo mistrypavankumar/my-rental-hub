@@ -12,6 +12,7 @@ import toast from "react-hot-toast";
 
 interface paymentAmountProps {
   amount: string;
+  houseId: string;
   memberId: string;
   paymentId: string;
   rentId: string;
@@ -33,6 +34,7 @@ const MemberRentList = ({
     memberId: "",
     rentId: rentPaymentData[0]?.rentId || "",
     paymentId: "",
+    houseId: rentPaymentData[0]?.houseId || "",
     remainingAmount: 0,
   });
 
@@ -93,6 +95,7 @@ const MemberRentList = ({
         memberId: "",
         paymentId: "",
         rentId: rentPaymentData[0]?.rentId || "",
+        houseId: rentPaymentData[0]?.houseId || "",
         remainingAmount: 0,
       });
     } else {
@@ -101,11 +104,14 @@ const MemberRentList = ({
         (member) => member.memberId === memberId
       );
 
+      console.log(selectedMember);
+
       if (selectedMember) {
         setPaymentAmount({
           amount: selectedMember?.remainingAmount?.toString() || "",
           memberId: memberId,
           paymentId: paymentId,
+          houseId: selectedMember.houseId,
           rentId: selectedMember.rentId,
           remainingAmount: selectedMember.remainingAmount || 0,
         });
@@ -149,6 +155,7 @@ const MemberRentList = ({
         paymentId: paymentAmount.paymentId,
         memberId: paymentAmount.memberId,
         rentId: paymentAmount.rentId,
+        houseId: paymentAmount.houseId,
         paidAmount: amount,
         remainingAmount: convertCentsToDollars(remainingAmount),
       });
@@ -160,6 +167,7 @@ const MemberRentList = ({
           amount: "",
           memberId: "",
           paymentId: "",
+          houseId: rentPaymentData[0]?.houseId || "",
           rentId: rentPaymentData[0]?.rentId || "",
           remainingAmount: 0,
         });

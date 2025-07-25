@@ -1,8 +1,10 @@
 import { MemberProps } from "@/lib/constants";
+import { noDataImg } from "@/public/assets";
 import {
   deleteMemberById,
   getMembersByHouseId,
 } from "@/services/houseServices";
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -88,6 +90,22 @@ const MemberRecord = ({
   if (!activeHouse) {
     return (
       <div className="text-center text-gray-500">No active house selected</div>
+    );
+  }
+
+  if (memberData.length === 0) {
+    return (
+      <div className="text-center text-gray-400 md:h-[80dvh] grid place-items-center">
+        <div>
+          <div className="w-full">
+            <Image src={noDataImg} alt="No data found" />
+          </div>
+          <h2 className="text-3xl">No members found for this house</h2>
+          <p className="text-gray-400 mt-2">
+            Add members to manage their rent and payments.
+          </p>
+        </div>
+      </div>
     );
   }
 

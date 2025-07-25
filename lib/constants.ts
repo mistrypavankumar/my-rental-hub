@@ -8,6 +8,7 @@ export interface AdminProps {
   name: string;
   email: string;
   role: string;
+  houses: string[];
   createdAt: Date;
   updatedAt: Date;
 }

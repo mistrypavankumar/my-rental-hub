@@ -1,4 +1,5 @@
 import connectToDatabase from "@/lib/db";
+import Admin from "@/models/Admin";
 import House from "@/models/House";
 import Member from "@/models/Member";
 import mongoose from "mongoose";
@@ -135,7 +136,15 @@ export async function DELETE(
   }
 
   try {
+    // Remove all members associated with the house
     await Member.deleteMany({ houseId });
+
+    // Remove the house from the admin's houses array
+    await Admin.findOneAndUpdate(
+      { houses: houseId },
+      { $pull: { houses: houseId } },
+      { new: true }
+    );
 
     const house = await House.findByIdAndDelete(houseId);
 

@@ -148,6 +148,7 @@ export async function PUT(request: NextRequest) {
 
     await PaymentHistory.create({
       paymentId: payment._id,
+      houseId: payment.houseId,
       memberId,
       rentId,
       paidAmount,

@@ -24,24 +24,30 @@ const House = () => {
   };
 
   return (
-    <div className="min-h-dvh py-5 w-[90%] mx-auto">
-      <h1 className="text-xl font-bold text-primary">Create a New House</h1>
-      <p className="text-sm text-gray-500  mb-10">
-        Fill out the form below to add a new house.
-      </p>
-      <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+    <div className="w-[90%] mx-auto my-10">
+      <div className="flex items-center justify-between mb-10">
+        <div>
+          <h1 className="text-2xl font-bold">Create a New House</h1>
+          <p className="text-gray-600">
+            {" "}
+            Fill out the form below to add a new house.
+          </p>
+        </div>
+      </div>
+      <div className="flex flex-col md:flex-row items-center justify-around gap-10">
         <div className="w-full md:max-w-[600px]">
           <CreateHouseForm
             submitLabel="Create House"
             initialFormData={initialFormData}
           />
         </div>
-        <div className="w-full flex items-center justify-center">
+        <div className="w-fit flex items-center justify-center">
+          {" "}
           <Image
             src={createHouseImg}
             alt="Create House"
-            height={700}
-            width={700}
+            height={900}
+            width={600}
           />
         </div>
       </div>
