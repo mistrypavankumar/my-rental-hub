@@ -134,7 +134,6 @@ const Page = () => {
               Fill in the details below to create a new rent record.
             </p>
           </div>
-
           <form
             onSubmit={handleSubmit}
             className="flex flex-col gap-4 w-full md:max-w-[600px]"
@@ -209,7 +208,7 @@ const Page = () => {
             </button>
           </form>
         </div>
-        <div className="w-full min-h-screen">
+        <div className="w-full flex flex-col justify-center">
           <RentRecord
             key={refreshKey}
             activeHouse={activeHouse}

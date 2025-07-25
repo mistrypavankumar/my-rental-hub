@@ -16,11 +16,13 @@ const Page = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [initialFormData, setInitialFormData] = useState<House>();
+  const [initialFormData, setInitialFormData] = useState<House | undefined>();
 
   const houseId = activeHouse?.houseId;
 
   useEffect(() => {
+    let timeout: NodeJS.Timeout;
+
     const fetchInitialData = async () => {
       setIsLoading(true);
       setInitialFormData(undefined);
@@ -33,13 +35,19 @@ const Page = () => {
       } catch (error) {
         showErrorMessage(error as Error);
       } finally {
-        setIsLoading(false);
+        timeout = setTimeout(() => {
+          setIsLoading(false);
+        }, 500);
       }
     };
 
     if (houseId) {
       fetchInitialData();
     }
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [houseId]);
 
   if (isLoading || !initialFormData) {

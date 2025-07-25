@@ -6,6 +6,7 @@ import houseImg from "./images/houses.svg";
 import membersImg from "./images/members.svg";
 import rentImg from "./images/rent.svg";
 import noDataImg from "./images/no-data.svg";
+import noRecordImg from "./images/no-record.svg";
 
 export {
   createHouseImg,
@@ -16,4 +17,5 @@ export {
   membersImg,
   rentImg,
   noDataImg,
+  noRecordImg,
 };

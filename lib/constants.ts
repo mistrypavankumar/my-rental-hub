@@ -48,7 +48,6 @@ export interface House {
   tenants?: [];
   roomStatus?: [];
   singleRoomRent: number;
-  sharedRoomRent: number;
   createdAt?: string;
   updatedAt?: string;
   __v?: number;
@@ -101,7 +100,6 @@ export interface HouseRequest {
   lateFeePerDay: number;
   rooms: number;
   singleRoomRent: number;
-  sharedRoomRent: number;
 }
 
 export interface PaymentProps {

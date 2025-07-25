@@ -19,8 +19,11 @@ const MemberRecord = ({
 }) => {
   const [memberData, setMemberData] = useState<MemberProps[]>([]);
   const [undo, setUndo] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    let timeout: NodeJS.Timeout;
+
     const fetchMembers = async () => {
       if (!activeHouse) return;
       try {
@@ -34,10 +37,18 @@ const MemberRecord = ({
         setMemberData(members);
       } catch (error) {
         console.error("Error fetching members:", error);
+      } finally {
+        timeout = setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     };
 
     fetchMembers();
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [activeHouse]);
 
   const handleDeleteMember = async (memberId: string) => {
@@ -87,9 +98,11 @@ const MemberRecord = ({
     }
   };
 
-  if (!activeHouse) {
+  if (loading) {
     return (
-      <div className="text-center text-gray-500">No active house selected</div>
+      <div className="text-center text-gray-400 md:h-[80dvh] grid place-items-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary"></div>
+      </div>
     );
   }
 

@@ -5,6 +5,8 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import ModalToGeneratePayment from "./ModalToGeneratePayment";
+import Image from "next/image";
+import { noRecordImg } from "@/public/assets";
 
 const RentRecord = ({
   activeHouse,
@@ -22,8 +24,11 @@ const RentRecord = ({
   const [deleteConfirmModal, setDeleteConfirmModal] = useState(false);
 
   const [openModel, setOpenModel] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    let timeout: NodeJS.Timeout;
+
     const fetchRents = async () => {
       if (!activeHouse) return;
 
@@ -37,10 +42,18 @@ const RentRecord = ({
         setRentData(response.data.rents);
       } catch (error) {
         console.error("Error fetching rent records:", error);
+      } finally {
+        timeout = setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     };
 
     fetchRents();
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [activeHouse]);
 
   const handleEditMember = (rentId: string) => {
@@ -99,8 +112,39 @@ const RentRecord = ({
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
 
+  if (loading) {
+    return (
+      <div className="text-center text-gray-400 md:h-[80dvh] grid place-items-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (rentData.length === 0) {
+    return (
+      <div className="text-center text-gray-400">
+        <div>
+          <div className="w-full flex items-center justify-center">
+            <Image src={noRecordImg} alt="No data found" width={500} />
+          </div>
+          <h2 className="text-3xl">No Rent Records Found</h2>
+          <p className="text-gray-400 mt-2">
+            Add rent records to manage payments.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold">
+          Rent Records of {activeHouse?.houseName || "Unknown House"} -{" "}
+          {rentData.length}
+        </h1>
+      </div>
+
       {openModel && (
         <ModalToGeneratePayment
           rentData={monthRentData}
@@ -137,17 +181,9 @@ const RentRecord = ({
         </div>
       )}
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">
-          Rent Records of {activeHouse?.houseName || "Unknown House"} -{" "}
-          {rentData.length}
-        </h1>
-      </div>
-
       <div className="w-full md:w-[90%] mx-auto flex flex-col gap-4 h-dvh overflow-y-auto">
         {rentData.map((rent, index) => {
           const createdAt = rent.month?.toString().split("T")[0];
-
           return (
             <div
               key={index}
