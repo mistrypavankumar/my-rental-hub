@@ -73,7 +73,15 @@ const Page = () => {
           />
         </div>
         <div className="w-fit flex items-center justify-center">
-          <Image src={houseImg} alt="House" width={900} height={600} />
+          <Image
+            src={houseImg}
+            loading="lazy"
+            alt="House"
+            decoding="async"
+            data-nimg="1"
+            width={900}
+            height={600}
+          />
         </div>
       </div>
     </div>

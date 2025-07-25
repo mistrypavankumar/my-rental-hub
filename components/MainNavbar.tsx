@@ -100,20 +100,20 @@ const MainNavbar = () => {
       <div className="w-[90%] mx-auto flex justify-between items-center py-4">
         <nav className="w-full">
           <ul className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-3">
+            <li className="flex items-center gap-3">
               <div
                 onClick={() => setIsOpenNav(true)}
                 className="md:hidden cursor-pointer"
               >
                 <BiMenuAltLeft size={25} />
               </div>
-              <li>
+              <div>
                 <Link href={"/dashboard"} className="text-xl font-bold">
                   MyRental-Hub
                 </Link>
-              </li>
-            </div>
-            <div
+              </div>
+            </li>
+            <li
               className={`fixed md:relative top-0 left-0 z-40 bg-primary h-dvh w-[min(300px,100%)] md:w-auto md:h-auto md:flex items-center gap-7 border-r-2 md:border-0 border-white/20 transition-transform duration-300 ease-in-out ${
                 isOpenNav
                   ? "translate-x-0"
@@ -128,7 +128,7 @@ const MainNavbar = () => {
                   <IoClose className="text-3xl" />
                 </div>
 
-                <li>
+                <div>
                   <Link
                     onClick={() => setIsOpenNav(false)}
                     href={"/dashboard"}
@@ -140,11 +140,11 @@ const MainNavbar = () => {
                   >
                     Dashboard
                   </Link>
-                </li>
+                </div>
 
                 {isAuthenticated && houses.length > 0 && (
                   <>
-                    <li>
+                    <div>
                       <Link
                         onClick={() => setIsOpenNav(false)}
                         href={"/my-house"}
@@ -156,9 +156,9 @@ const MainNavbar = () => {
                       >
                         My House
                       </Link>
-                    </li>
+                    </div>
 
-                    <li>
+                    <div>
                       <Link
                         onClick={() => setIsOpenNav(false)}
                         href={"/members"}
@@ -170,8 +170,8 @@ const MainNavbar = () => {
                       >
                         Members
                       </Link>
-                    </li>
-                    <li>
+                    </div>
+                    <div>
                       <Link
                         onClick={() => setIsOpenNav(false)}
                         href={"/rents"}
@@ -183,11 +183,11 @@ const MainNavbar = () => {
                       >
                         Rents
                       </Link>
-                    </li>
+                    </div>
                   </>
                 )}
               </div>
-            </div>
+            </li>
             <li>
               <div
                 onClick={() => setToggleDropdown(!toggleDropdown)}

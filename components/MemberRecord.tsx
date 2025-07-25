@@ -111,7 +111,13 @@ const MemberRecord = ({
       <div className="text-center text-gray-400 md:h-[80dvh] grid place-items-center">
         <div>
           <div className="w-full">
-            <Image src={noDataImg} alt="No data found" />
+            <Image
+              src={noDataImg}
+              alt="No data found"
+              loading="lazy"
+              decoding="async"
+              data-nimg="1"
+            />
           </div>
           <h2 className="text-3xl">No members found for this house</h2>
           <p className="text-gray-400 mt-2">

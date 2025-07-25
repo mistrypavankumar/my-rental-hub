@@ -125,7 +125,14 @@ const RentRecord = ({
       <div className="text-center text-gray-400">
         <div>
           <div className="w-full flex items-center justify-center">
-            <Image src={noRecordImg} alt="No data found" width={500} />
+            <Image
+              src={noRecordImg}
+              alt="No data found"
+              width={500}
+              loading="lazy"
+              decoding="async"
+              data-nimg="1"
+            />
           </div>
           <h2 className="text-3xl">No Rent Records Found</h2>
           <p className="text-gray-400 mt-2">
