@@ -40,8 +40,8 @@ const Page = () => {
   return (
     <div className="min-h-dvh py-5 w-[90%] mx-auto">
       {!activeHouseDetails && (
-        <div className="flex flex-col items-center justify-center gap-5 mb-10 bg-red-100 p-5 rounded-lg">
-          <p className="text-red-600 text-lg">
+        <div className="flex flex-col items-center justify-center w-fit mx-auto gap-5 mb-10 bg-red-100 p-5 rounded-lg">
+          <p className="text-red-600 text-lg text-center">
             Please create a new house to get started. Go to profile dropdown and
             click on <span className="font-semibold underline">New House</span>.
           </p>

@@ -79,6 +79,7 @@ export interface RentProps {
   lateFeeApplied?: boolean;
   lateFeeAmount?: number;
   reasonForLateFee?: string;
+  isRentGenerated?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

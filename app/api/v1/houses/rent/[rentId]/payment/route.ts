@@ -35,7 +35,7 @@ export async function GET(
     }
 
     if (!payments || payments.length === 0) {
-      return NextResponse.json({ error: "No payments found" }, { status: 404 });
+      return NextResponse.json({ payments }, { status: 200 });
     }
 
     return NextResponse.json({ payments }, { status: 200 });

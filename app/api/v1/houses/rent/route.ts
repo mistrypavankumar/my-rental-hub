@@ -62,6 +62,7 @@ export async function POST(request: NextRequest) {
       lateFeeApplied: false,
       lateFeeAmount: 0,
       reasonForLateFee: "",
+      isRentGenerated: false,
     });
 
     return NextResponse.json(

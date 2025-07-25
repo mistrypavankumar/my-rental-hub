@@ -52,6 +52,10 @@ const rentSchema = new mongoose.Schema({
   paidDate: {
     type: Date,
   },
+  isRentGenerated: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

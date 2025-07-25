@@ -1,19 +1,16 @@
 "use client";
 
 import { MemberProps, PaymentProps, RentProps } from "@/lib/constants";
-import {
-  convertCentsToDollars,
-  convertDollarsToCents,
-  setInLocalStorage,
-} from "@/lib/utils";
-import { generatePayment, getPaymentsByRentId } from "@/services/rentServices";
+import { convertCentsToDollars, convertDollarsToCents } from "@/lib/utils";
+
+import { generatePayment } from "@/services/rentServices";
 import React, { useEffect, useState } from "react";
 import { RiLoader5Fill } from "react-icons/ri";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/redux/store";
 import { IoClose } from "react-icons/io5";
-import { getMembersByHouseId } from "@/services/houseServices";
+import { getMembersByHouseId, updateRentById } from "@/services/houseServices";
 
 const ModalToGeneratePayment = ({
   rentData,
@@ -21,11 +18,13 @@ const ModalToGeneratePayment = ({
   rentId,
   activeHouse,
   setOpenModel,
+  isRentGenerated,
 }: {
   rentData: RentProps | null;
   month: string;
   setOpenModel: React.Dispatch<React.SetStateAction<boolean>>;
   rentId: string;
+  isRentGenerated: boolean;
   activeHouse?: { houseName: string; houseId: string; defaultPrice: number };
 }) => {
   const router = useRouter();
@@ -33,38 +32,42 @@ const ModalToGeneratePayment = ({
   const [paymentData, setPaymentData] = useState<PaymentProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [allMembers, setAllMembers] = useState<MemberProps[]>([]);
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (!activeHouse) {
-      setLoading(false);
-      return;
-    }
-  }, [activeHouse]);
+  // useEffect(() => {
+  //   let timeout: NodeJS.Timeout;
 
-  useEffect(() => {
-    const fetchPayments = async () => {
-      if (!rentId) return;
+  //   const fetchPayments = async () => {
+  //     if (!rentId) return;
 
-      try {
-        const response = await getPaymentsByRentId(rentId);
+  //     try {
+  //       const response = await getPaymentsByRentId(rentId);
 
-        if (response.status !== 200) {
-          throw new Error("Failed to fetch payment records");
-        }
+  //       if (response.status !== 200) {
+  //         throw new Error("Failed to fetch payment records");
+  //       }
 
-        if (response.data.payments.length > 0) {
-          setPaymentData(response.data.payments);
-          setInLocalStorage("rentId", rentId);
-          router.push(`/rents/${rentId}/manage`);
-        }
-      } catch (error) {
-        console.error("Error fetching payment records:", error);
-        setLoading(false);
-      }
-    };
+  //       if (response.data.payments.length > 0) {
+  //         setPaymentData(response.data.payments);
+  //         setInLocalStorage("rentId", rentId);
+  //         router.push(`/rents/${rentId}/manage`);
 
-    fetchPayments();
-  }, [rentId, router]);
+  //         timeout = setTimeout(() => {
+  //           setLoading(false);
+  //         }, 3000);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching payment records:", error);
+  //       toast.error("Please generate a payment first");
+  //     }
+  //   };
+
+  //   fetchPayments();
+
+  //   return () => {
+  //     clearTimeout(timeout);
+  //   };
+  // }, [rentId, router]);
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -122,6 +125,7 @@ const ModalToGeneratePayment = ({
   };
 
   const handleGeneratePayment = async () => {
+    setIsGenerating(true);
     try {
       if (!rentId || !activeHouseMembers || activeHouseMembers.length === 0) {
         throw new Error("No members found for this house");
@@ -153,8 +157,6 @@ const ModalToGeneratePayment = ({
           paid: false,
         };
 
-        setLoading(true);
-
         // const totalRent =
         //   paymentDetails.houseRent +
         //   paymentDetails.gas +
@@ -171,12 +173,17 @@ const ModalToGeneratePayment = ({
         // });
 
         generatePayment(paymentDetails)
-          .then((response) => {
+          .then(async (response) => {
             if (response.status === 201) {
               setPaymentData((prev) => [...prev, response.data.payment]);
             }
 
+            await updateRentById(rentId, {
+              isRentGenerated: true,
+            });
+
             router.push(`/rents/${rentId}/manage`);
+            setLoading(false);
           })
           .catch((error) => {
             console.error("Error generating payment:", error);
@@ -187,7 +194,9 @@ const ModalToGeneratePayment = ({
     }
   };
 
-  if (loading) {
+  if (isRentGenerated || !loading || isGenerating) {
+    router.push(`/rents/${rentId}/manage`);
+
     return (
       <div className="fixed backdrop-blur-md z-40 inset-0 top-0 left-0 bg-primary/80 min-h-screen w-full ">
         <div>

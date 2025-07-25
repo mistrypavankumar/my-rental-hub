@@ -96,6 +96,9 @@ const RentRecord = ({
     }
   };
 
+  const currentMonth = new Date().getMonth() + 1;
+  const currentYear = new Date().getFullYear();
+
   return (
     <>
       {openModel && (
@@ -105,6 +108,7 @@ const RentRecord = ({
           setOpenModel={setOpenModel}
           activeHouse={activeHouse}
           rentId={rentId}
+          isRentGenerated={monthRentData?.isRentGenerated || false}
         />
       )}
 
@@ -141,60 +145,73 @@ const RentRecord = ({
       </div>
 
       <div className="w-full md:w-[90%] mx-auto flex flex-col gap-4 h-dvh overflow-y-auto">
-        {rentData.map((rent, index) => (
-          <div
-            key={index}
-            className="border-2 border-gray-300 rounded-md p-3 bg-white shadow-lg flex justify-between items-center"
-          >
-            <div>
-              <h1 className="text-xl font-bold">
-                {new Date(rent.month).toLocaleString("default", {
-                  month: "long",
-                })}{" "}
-              </h1>
-              <p className="text-gray-400 font-semibold">
-                {rent.createdAt?.toString().split("T")[0]}
-              </p>
-            </div>
-            <div>
-              <div className="flex flex-col items-end justify-end">
-                <h2 className="font-bold text-green-600 capitalize text-xl">
-                  ${rent.totalRent}
-                </h2>
-                <div className="flex gap-3 text-gray-500">
-                  <p
-                    className="hover:underline cursor-pointer text-blue-600 font-medium"
-                    onClick={() => handleEditMember(rent._id!)}
-                  >
-                    {undo === rent._id ? "Undo" : "Edit"}
-                  </p>{" "}
-                  |{" "}
-                  <Link
-                    href={"#"}
-                    onClick={() => {
-                      setOpenModel(true);
-                      setRentId(rent._id!);
-                      setMonthRentData(rent);
-                    }}
-                    className="hover:underline text-nowrap cursor-pointer text-blue-600 font-medium"
-                  >
-                    Manage Rent
-                  </Link>{" "}
-                  |
-                  <p
-                    className="hover:underline cursor-pointer text-red-500 font-medium"
-                    onClick={() => {
-                      setDeleteConfirmModal(true);
-                      setRentId(rent._id!);
-                    }}
-                  >
-                    Delete
-                  </p>
+        {rentData.map((rent, index) => {
+          const createdAt = rent.month?.toString().split("T")[0];
+
+          return (
+            <div
+              key={index}
+              className="border-2 border-gray-300 rounded-md p-3 bg-white shadow-lg flex justify-between items-center"
+            >
+              <div>
+                <h1 className="text-xl font-bold">
+                  {new Date(rent.month).toLocaleString("default", {
+                    month: "long",
+                  })}{" "}
+                </h1>
+                <p className="text-gray-400 font-semibold">{createdAt}</p>
+              </div>
+              <div>
+                <div className="flex flex-col items-end justify-end">
+                  <h2 className="font-bold text-green-600 capitalize text-xl">
+                    ${rent.totalRent}
+                  </h2>
+                  <div className="flex gap-3 text-gray-500">
+                    {new Date(rent.month).getMonth() + 1 === currentMonth &&
+                    new Date(rent.month).getFullYear() === currentYear &&
+                    !rent.isRentGenerated ? (
+                      <>
+                        <p
+                          className="hover:underline cursor-pointer text-blue-600 font-medium"
+                          onClick={() => handleEditMember(rent._id!)}
+                        >
+                          {undo === rent._id ? "Undo" : "Edit"}
+                        </p>{" "}
+                        |{" "}
+                      </>
+                    ) : null}
+                    <Link
+                      href={"#"}
+                      onClick={() => {
+                        setOpenModel(true);
+                        setRentId(rent._id!);
+                        setMonthRentData(rent);
+                      }}
+                      className="hover:underline text-nowrap cursor-pointer text-blue-600 font-medium"
+                    >
+                      Manage Rent
+                    </Link>{" "}
+                    {new Date(rent.month).getMonth() + 1 === currentMonth &&
+                    new Date(rent.month).getFullYear() === currentYear ? (
+                      <>
+                        |{" "}
+                        <p
+                          className="hover:underline cursor-pointer text-red-600 font-medium"
+                          onClick={() => {
+                            setDeleteConfirmModal(true);
+                            setRentId(rent._id!);
+                          }}
+                        >
+                          Delete
+                        </p>
+                      </>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </>
   );

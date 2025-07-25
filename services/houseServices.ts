@@ -138,7 +138,10 @@ export async function getRentsByHouseId(houseId: string) {
   }
 }
 
-export async function updateRentById(rentId: string, formData: RentProps) {
+export async function updateRentById(
+  rentId: string,
+  formData: RentProps | Partial<RentProps>
+) {
   console.log("Updating rent with ID:", rentId, "and data:", formData);
 
   try {

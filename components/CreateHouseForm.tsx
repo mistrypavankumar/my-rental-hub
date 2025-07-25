@@ -193,9 +193,9 @@ const CreateHouseForm = ({
           name="defaultPrice"
           value={formData.defaultPrice}
           onChange={handleInputChange}
-          placeholder="Default Rent Price in Cents"
+          placeholder="Default Monthly Rent Price"
           required
-          label="Default Rent Price in Cents"
+          label="Default Monthly Rent Price"
         />
 
         <label className="flex items-center space-x-2 text-sm">
