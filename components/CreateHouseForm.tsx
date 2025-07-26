@@ -242,7 +242,11 @@ const CreateHouseForm = ({
           <CustomInputField
             type="number"
             name="singleRoomRent"
-            value={formData.singleRoomRent}
+            value={
+              formData.singleRoomRent
+                ? formData.singleRoomRent
+                : formData.defaultPrice / formData.rooms || 0
+            }
             onChange={handleInputChange}
             placeholder="Single Room Rent"
             label="Single Room Rent"

@@ -188,13 +188,13 @@ const RentRecord = ({
         </div>
       )}
 
-      <div className="w-full md:w-[90%] mx-auto flex flex-col gap-4 h-dvh overflow-y-auto">
+      <div className="w-full md:w-[90%] mx-auto flex flex-col h-dvh overflow-y-auto">
         {rentData.map((rent, index) => {
           const createdAt = rent.month?.toString().split("T")[0];
           return (
             <div
               key={index}
-              className="border-2 border-gray-300 rounded-md p-3 bg-white shadow-lg flex justify-between items-center"
+              className="border-2 border-gray-300 rounded-md p-3 mb-5 bg-white shadow-lg flex justify-between items-center"
             >
               <div>
                 <h1 className="text-xl font-bold">

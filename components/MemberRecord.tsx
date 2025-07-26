@@ -129,7 +129,7 @@ const MemberRecord = ({
   }
 
   return (
-    <>
+    <div>
       <div className="mb-6">
         <h1 className="text-2xl font-bold">
           Members of {activeHouse?.houseName || "Unknown House"} -{" "}
@@ -137,11 +137,11 @@ const MemberRecord = ({
         </h1>
       </div>
 
-      <div className="w-full md:w-[90%] mx-auto flex flex-col gap-4 h-dvh overflow-y-auto">
+      <div className="w-full md:w-[90%] mx-auto flex flex-col h-auto overflow-y-auto">
         {memberData.map((member, index) => (
           <div
             key={index}
-            className="border-2 border-gray-300 rounded-md p-3 bg-white shadow-lg flex justify-between items-center"
+            className="border-2 border-gray-300 rounded-md p-3 bg-white shadow-lg flex justify-between items-center mb-5"
           >
             <div>
               <h1 className="text-xl font-bold">{member.name}</h1>
@@ -175,7 +175,7 @@ const MemberRecord = ({
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

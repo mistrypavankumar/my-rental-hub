@@ -165,7 +165,7 @@ const Page = () => {
           </form>
         </div>
 
-        <div className="w-full min-h-screen">
+        <div className="w-full flex flex-col">
           <MemberRecord
             key={refreshKey}
             activeHouse={activeHouse}
