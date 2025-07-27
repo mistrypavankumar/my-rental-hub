@@ -5,15 +5,16 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Record<string, string> }
+  context: { params: { houseId: string } }
 ) {
-  const houseId = params!.houseId;
-  await connectToDatabase();
+  const { houseId } = context.params;
 
   try {
     if (!houseId || !mongoose.Types.ObjectId.isValid(houseId)) {
       return NextResponse.json({ error: "Invalid house ID" }, { status: 400 });
     }
+
+    await connectToDatabase();
 
     const paymentHistory = await PaymentHistory.find({ houseId }).sort({
       createdAt: -1,
