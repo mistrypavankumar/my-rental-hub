@@ -5,9 +5,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { rentId: string } }
+  context: { params: { rentId: string } }
 ) {
+  const params = context.params;
   const rentId = params.rentId;
+
   await connectToDatabase();
 
   try {

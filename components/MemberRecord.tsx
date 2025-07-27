@@ -33,7 +33,6 @@ const MemberRecord = ({
         }
 
         const { members } = response.data;
-        console.log("Fetched Members:", members);
         setMemberData(members);
       } catch (error) {
         console.error("Error fetching members:", error);

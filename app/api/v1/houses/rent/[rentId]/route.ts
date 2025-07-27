@@ -8,7 +8,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: { rentId: string } }
 ) {
-  const rentId = params.rentId;
+  const rentId = params!.rentId;
 
   await connectToDatabase();
 

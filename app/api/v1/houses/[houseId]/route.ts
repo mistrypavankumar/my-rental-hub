@@ -11,7 +11,7 @@ export async function GET(
 ) {
   await connectToDatabase();
 
-  const houseId = params.houseId;
+  const houseId = params!.houseId;
 
   if (!houseId) {
     return NextResponse.json(
