@@ -5,9 +5,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  context: { params: { houseId: string } }
-) {
-  const houseId = context.params.houseId;
+  { params }: { params: { houseId: string } }
+): Promise<NextResponse> {
+  const houseId = params.houseId;
   await connectToDatabase();
 
   try {
