@@ -78,6 +78,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: "An error occurred during registration",
+        message: error instanceof Error ? error.message : "Unknown error",
       },
       {
         status: 500,

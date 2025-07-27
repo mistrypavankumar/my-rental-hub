@@ -60,7 +60,10 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     return NextResponse.json(
-      { error: "An error occurred during login" },
+      {
+        error: "An error occurred during login",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }
