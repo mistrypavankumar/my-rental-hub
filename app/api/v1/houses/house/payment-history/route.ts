@@ -3,11 +3,9 @@ import PaymentHistory from "@/models/PaymentHistory";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  context: { params: { houseId: string } }
-) {
-  const { houseId } = context.params;
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const houseId = searchParams.get("houseId");
 
   try {
     if (!houseId || !mongoose.Types.ObjectId.isValid(houseId)) {

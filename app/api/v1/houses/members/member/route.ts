@@ -4,11 +4,10 @@ import Member from "@/models/Member";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { memberId: string } }
-) {
-  const memberId = params.memberId;
+export async function GET(request: NextRequest) {
+  const params = request.nextUrl.searchParams;
+  const memberId = params.get("memberId");
+
   await connectToDatabase();
 
   try {
@@ -34,15 +33,10 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  {
-    params,
-  }: {
-    params: { memberId: string };
-  }
-) {
-  const memberId = params.memberId;
+export async function PUT(request: NextRequest) {
+  const params = request.nextUrl.searchParams;
+  const memberId = params.get("memberId");
+
   await connectToDatabase();
 
   try {
@@ -72,11 +66,10 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { memberId: string } }
-) {
-  const memberId = params.memberId;
+export async function DELETE(request: NextRequest) {
+  const params = request.nextUrl.searchParams;
+  const memberId = params.get("memberId");
+
   await connectToDatabase();
 
   try {

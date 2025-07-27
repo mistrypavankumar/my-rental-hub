@@ -29,7 +29,7 @@ export async function getHouses() {
 
 export async function getHouseById(houseId: string) {
   try {
-    const res = await axios.get(`/api/v1/houses/${houseId}`, {
+    const res = await axios.get(`/api/v1/houses/house?houseId=${houseId}`, {
       withCredentials: true,
     });
 
@@ -41,9 +41,13 @@ export async function getHouseById(houseId: string) {
 
 export async function updateHouse(houseId: string, formData: HouseRequest) {
   try {
-    const res = await axios.put(`/api/v1/houses/${houseId}`, formData, {
-      withCredentials: true,
-    });
+    const res = await axios.put(
+      `/api/v1/houses/house?houseId=${houseId}`,
+      formData,
+      {
+        withCredentials: true,
+      }
+    );
 
     return res;
   } catch (err) {
@@ -53,7 +57,7 @@ export async function updateHouse(houseId: string, formData: HouseRequest) {
 
 export async function deleteHouse(houseId: string) {
   try {
-    const res = await axios.delete(`/api/v1/houses/${houseId}`, {
+    const res = await axios.delete(`/api/v1/houses/house?houseId=${houseId}`, {
       withCredentials: true,
     });
 
@@ -65,7 +69,7 @@ export async function deleteHouse(houseId: string) {
 
 export async function createMember(formData: MemberProps) {
   try {
-    const res = await axios.post("/api/v1/houses/member", formData, {
+    const res = await axios.post("/api/v1/houses/members", formData, {
       withCredentials: true,
     });
 
@@ -80,9 +84,13 @@ export async function updateMemberById(
   formData: MemberProps
 ) {
   try {
-    const res = await axios.put(`/api/v1/houses/member/${memberId}`, formData, {
-      withCredentials: true,
-    });
+    const res = await axios.put(
+      `/api/v1/houses/members/member?memberId=${memberId}`,
+      formData,
+      {
+        withCredentials: true,
+      }
+    );
 
     return res;
   } catch (err) {
@@ -92,7 +100,7 @@ export async function updateMemberById(
 
 export async function getMembersByHouseId(houseId: string) {
   try {
-    const res = await axios.get(`/api/v1/houses/member?houseId=${houseId}`, {
+    const res = await axios.get(`/api/v1/houses/members?houseId=${houseId}`, {
       withCredentials: true,
     });
 
@@ -104,9 +112,12 @@ export async function getMembersByHouseId(houseId: string) {
 
 export async function deleteMemberById(memberId: string) {
   try {
-    const res = await axios.delete(`/api/v1/houses/member/${memberId}`, {
-      withCredentials: true,
-    });
+    const res = await axios.delete(
+      `/api/v1/houses/members/member?memberId=${memberId}`,
+      {
+        withCredentials: true,
+      }
+    );
 
     return res;
   } catch (err) {

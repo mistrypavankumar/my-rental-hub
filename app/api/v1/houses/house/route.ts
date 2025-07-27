@@ -5,13 +5,11 @@ import Member from "@/models/Member";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { houseId: string } }
-) {
+export async function GET(request: NextRequest) {
   await connectToDatabase();
 
-  const houseId = params!.houseId;
+  const searchParams = request.nextUrl.searchParams;
+  const houseId = searchParams.get("houseId");
 
   if (!houseId) {
     return NextResponse.json(
@@ -44,13 +42,20 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { houseId: string } }
-) {
+export async function PUT(request: NextRequest) {
   await connectToDatabase();
 
-  const houseId = params.houseId;
+  const params = request.nextUrl.searchParams;
+
+  if (!params.has("houseId")) {
+    return NextResponse.json(
+      { error: "House ID is required" },
+      { status: 400 }
+    );
+  }
+
+  const houseId = params.get("houseId");
+
   const {
     name,
     address,
@@ -58,11 +63,11 @@ export async function PUT(
     ownerPhone,
     defaultPrice,
     rooms,
-    sharedRoomRent,
     singleRoomRent,
     utilities,
     roomStatus,
     tenants,
+    lateFeePerDay,
   } = await request.json();
 
   if (!houseId) {
@@ -88,8 +93,8 @@ export async function PUT(
         ownerPhone,
         defaultPrice,
         rooms,
-        sharedRoomRent,
         singleRoomRent,
+        lateFeePerDay,
         utilities: {
           gasAmount: utilities?.gasAmount || 0,
           waterAmount: utilities?.waterAmount || 0,
@@ -113,13 +118,12 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { houseId: string } }
-) {
+export async function DELETE(request: NextRequest) {
   await connectToDatabase();
 
-  const houseId = params.houseId;
+  const params = request.nextUrl.searchParams;
+
+  const houseId = params.get("houseId");
 
   if (!houseId) {
     return NextResponse.json(

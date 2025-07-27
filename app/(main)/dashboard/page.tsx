@@ -45,7 +45,7 @@ const Page = () => {
 
       try {
         const response = await fetch(
-          `/api/v1/houses/${activeHouseDetails._id}/payment-history`
+          `/api/v1/houses/house/payment-history?houseId=${activeHouseDetails._id}`
         );
 
         if (!response.ok) {
