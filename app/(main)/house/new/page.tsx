@@ -20,7 +20,6 @@ const House = () => {
     lateFeePerDay: 0,
     rooms: 0,
     singleRoomRent: 0,
-    sharedRoomRent: 0,
   };
 
   return (

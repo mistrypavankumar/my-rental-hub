@@ -49,7 +49,6 @@ export async function POST(request: NextRequest) {
     rooms,
     utilitiesIncluded,
     singleRoomRent,
-    sharedRoomRent,
   } = await request.json();
 
   await connectToDatabase();
@@ -132,7 +131,6 @@ export async function POST(request: NextRequest) {
       defaultPrice,
       rooms,
       singleRoomRent,
-      sharedRoomRent,
     });
 
     await Admin.findByIdAndUpdate(adminId, {

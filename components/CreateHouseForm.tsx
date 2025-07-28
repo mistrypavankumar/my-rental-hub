@@ -11,7 +11,7 @@ import {
   updateHouse,
 } from "@/services/houseServices";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import CustomInputField from "./CustomInputField";
 import { House } from "@/lib/constants";
@@ -30,6 +30,27 @@ const CreateHouseForm = ({
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
   const [formData, setFormData] = useState(initialFormData);
+  const [customSingleRoomRent, setCustomSingleRoomRent] = useState(
+    formData.singleRoomRent
+  );
+
+  useEffect(() => {
+    if (customSingleRoomRent) {
+      setFormData((prev) => ({
+        ...prev,
+        singleRoomRent: customSingleRoomRent,
+      }));
+
+      return;
+    }
+
+    if (formData.rooms > 0 && formData.defaultPrice > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        singleRoomRent: prev.defaultPrice / (prev.rooms || 1) || 0,
+      }));
+    }
+  }, [formData.rooms, formData.defaultPrice, customSingleRoomRent]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -69,6 +90,7 @@ const CreateHouseForm = ({
         const response = await updateHouse(formData._id!, {
           ...formData,
           defaultPrice: convertDollarsToCents(formData.defaultPrice),
+          singleRoomRent: customSingleRoomRent || formData.singleRoomRent,
         });
 
         if (response.status === 200) {
@@ -242,12 +264,8 @@ const CreateHouseForm = ({
           <CustomInputField
             type="number"
             name="singleRoomRent"
-            value={
-              formData.singleRoomRent
-                ? formData.singleRoomRent
-                : formData.defaultPrice / formData.rooms || 0
-            }
-            onChange={handleInputChange}
+            value={customSingleRoomRent || formData.singleRoomRent}
+            onChange={(e) => setCustomSingleRoomRent(Number(e.target.value))}
             placeholder="Single Room Rent"
             label="Single Room Rent"
           />

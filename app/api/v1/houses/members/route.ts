@@ -5,8 +5,6 @@ import Rent from "@/models/Rent";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
-export const runtime = "nodejs";
-
 export async function POST(request: NextRequest) {
   await connectToDatabase();
 

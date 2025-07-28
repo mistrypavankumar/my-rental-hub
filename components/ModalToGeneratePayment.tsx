@@ -56,6 +56,8 @@ const ModalToGeneratePayment = ({
         if (response.status === 200) {
           const { house } = response.data;
 
+          console.log("House data:", house);
+
           setActiveHouseData({
             houseId: house._id,
             actualHouseRent: house.defaultPrice || 0,
