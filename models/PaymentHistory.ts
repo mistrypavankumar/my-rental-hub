@@ -17,6 +17,10 @@ const paymentHistorySchema = new mongoose.Schema(
       ref: "Member",
       required: true,
     },
+    memberName: {
+      type: String,
+      required: true,
+    },
     rentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Rent",

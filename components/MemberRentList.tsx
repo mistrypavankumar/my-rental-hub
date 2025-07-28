@@ -17,6 +17,7 @@ interface paymentAmountProps {
   paymentId: string;
   rentId: string;
   remainingAmount: number;
+  memberName: string;
 }
 
 const MemberRentList = ({
@@ -34,6 +35,7 @@ const MemberRentList = ({
     memberId: "",
     rentId: rentPaymentData[0]?.rentId || "",
     paymentId: "",
+    memberName: "",
     houseId: rentPaymentData[0]?.houseId || "",
     remainingAmount: 0,
   });
@@ -94,6 +96,7 @@ const MemberRentList = ({
         amount: "",
         memberId: "",
         paymentId: "",
+        memberName: "",
         rentId: rentPaymentData[0]?.rentId || "",
         houseId: rentPaymentData[0]?.houseId || "",
         remainingAmount: 0,
@@ -104,12 +107,11 @@ const MemberRentList = ({
         (member) => member.memberId === memberId
       );
 
-      console.log(selectedMember);
-
       if (selectedMember) {
         setPaymentAmount({
           amount: selectedMember?.remainingAmount?.toString() || "",
           memberId: memberId,
+          memberName: getMemberById(memberId)?.name || "Unknown Member",
           paymentId: paymentId,
           houseId: selectedMember.houseId,
           rentId: selectedMember.rentId,
@@ -170,6 +172,7 @@ const MemberRentList = ({
           houseId: rentPaymentData[0]?.houseId || "",
           rentId: rentPaymentData[0]?.rentId || "",
           remainingAmount: 0,
+          memberName: "",
         });
 
         setRefreshPage((prev) => prev + 1); // Trigger a refresh of the page

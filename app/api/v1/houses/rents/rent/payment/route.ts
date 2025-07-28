@@ -92,8 +92,14 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const { paymentId, memberId, rentId, paidAmount, remainingAmount } =
-    await request.json();
+  const {
+    paymentId,
+    memberId,
+    rentId,
+    paidAmount,
+    remainingAmount,
+    memberName,
+  } = await request.json();
   await connectToDatabase();
 
   try {
@@ -110,6 +116,17 @@ export async function PUT(request: NextRequest) {
 
     if (!rentId || !mongoose.Types.ObjectId.isValid(rentId)) {
       return NextResponse.json({ error: "Invalid rent ID" }, { status: 400 });
+    }
+
+    if (
+      !memberName ||
+      typeof memberName !== "string" ||
+      memberName.trim() === ""
+    ) {
+      return NextResponse.json(
+        { error: "Invalid member name" },
+        { status: 400 }
+      );
     }
 
     if (typeof paidAmount !== "number" || paidAmount < 0) {
@@ -147,6 +164,7 @@ export async function PUT(request: NextRequest) {
       paymentId: payment._id,
       houseId: payment.houseId,
       memberId,
+      memberName: memberName,
       rentId,
       paidAmount,
       remainingAmount,
