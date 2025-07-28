@@ -1,19 +1,10 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 
 import Providers from "@/redux/Providers";
 import LoadUser from "@/components/LoadUser";
 
 import "./globals.css";
-
-// Configure the Poppins font correctly
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "700", "800", "900"],
-  variable: "--font-poppins-sans",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "MyRental-Hub",
@@ -26,8 +17,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${poppins.variable}`}>
-      <body className="antialiased">
+    <html lang="en">
+      <body className="antialiased ">
         <Toaster position="top-center" />
         <Providers>
           <LoadUser>{children}</LoadUser>

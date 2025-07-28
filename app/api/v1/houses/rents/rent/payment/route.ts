@@ -4,11 +4,10 @@ import PaymentHistory from "@/models/PaymentHistory";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { rentId: string } }
-) {
-  const rentId = params!.rentId;
+export async function GET(request: NextRequest) {
+  const params = request.nextUrl.searchParams;
+  const rentId = params.get("rentId");
+
   await connectToDatabase();
 
   const searchParams = request.nextUrl.searchParams;
@@ -50,11 +49,9 @@ export async function GET(
   }
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { rentId: string } }
-) {
-  const rentId = params.rentId;
+export async function POST(request: NextRequest) {
+  const params = request.nextUrl.searchParams;
+  const rentId = params.get("rentId");
   await connectToDatabase();
 
   try {

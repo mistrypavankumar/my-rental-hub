@@ -1,6 +1,6 @@
 import { RentProps } from "@/lib/constants";
 import { convertCentsToDollars, showErrorMessage } from "@/lib/utils";
-import { deleteRentById, getRentsByHouseId } from "@/services/houseServices";
+import { deleteRentById, getRentsByHouseId } from "@/services/rentServices";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";

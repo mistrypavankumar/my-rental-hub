@@ -1,6 +1,7 @@
 import connectToDatabase from "@/lib/db";
 import House from "@/models/House";
 import Member from "@/models/Member";
+import Rent from "@/models/Rent";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -79,6 +80,24 @@ export async function DELETE(request: NextRequest) {
 
     const member = await Member.findById(memberId);
 
+    if (!member) {
+      return NextResponse.json({ error: "Member not found" }, { status: 404 });
+    }
+
+    const paymentGenerated = await Rent.findOne({
+      houseId: member?.houseId,
+    }).sort({ month: -1 });
+
+    if (
+      paymentGenerated?.isRentGenerated === true &&
+      paymentGenerated.month.getMonth() + 1 === new Date().getMonth() + 1
+    ) {
+      return NextResponse.json(
+        { error: "Cannot delete member, rent has already been generated" },
+        { status: 400 }
+      );
+    }
+
     const updateHouse = await House.updateOne(
       { _id: member?.houseId },
       {
@@ -104,6 +123,7 @@ export async function DELETE(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    console.error("Error in DELETE /member:", error);
     return NextResponse.json(
       {
         error: "Failed to delete member",

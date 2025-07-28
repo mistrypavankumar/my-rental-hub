@@ -73,6 +73,7 @@ const Page = () => {
       toast.success(
         `Member ${formMode === "create" ? "added" : "updated"} successfully!`
       );
+
       setRefreshKey((prev) => prev + 1);
 
       setFormData({

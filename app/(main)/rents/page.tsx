@@ -9,7 +9,7 @@ import {
   showErrorMessage,
 } from "@/lib/utils";
 import { RootState } from "@/redux/store";
-import { createRent, updateRentById } from "@/services/houseServices";
+import { createRent, updateRentById } from "@/services/rentServices";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";

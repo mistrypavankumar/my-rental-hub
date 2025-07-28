@@ -3,12 +3,9 @@ import PaymentHistory from "@/models/PaymentHistory";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  request: NextRequest,
-  context: { params: { rentId: string } }
-) {
-  const params = context.params;
-  const rentId = params.rentId;
+export async function GET(request: NextRequest) {
+  const params = request.nextUrl.searchParams;
+  const rentId = params.get("rentId");
 
   await connectToDatabase();
 

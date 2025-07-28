@@ -1,4 +1,5 @@
 import { MemberProps } from "@/lib/constants";
+import { showErrorMessage } from "@/lib/utils";
 import { noDataImg } from "@/public/assets";
 import {
   deleteMemberById,
@@ -54,13 +55,14 @@ const MemberRecord = ({
     try {
       const response = await deleteMemberById(memberId);
       if (response.status !== 200) {
+        console.log(response);
         throw new Error("Failed to delete member");
       }
 
       setMemberData((prev) => prev.filter((member) => member._id !== memberId));
       toast.success("Member deleted successfully");
     } catch (error) {
-      console.error("Error deleting member:", error);
+      showErrorMessage(error as Error);
     }
   };
 

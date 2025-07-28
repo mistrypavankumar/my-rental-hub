@@ -76,7 +76,7 @@ const Page = () => {
     <div className="p-6 max-w-6xl mx-auto">
       <MemberRentList
         rentPaymentData={rentPaymentData}
-        membersData={membersData}
+        membersData={membersData!}
         setRefreshPage={setRefreshPage}
       />
 

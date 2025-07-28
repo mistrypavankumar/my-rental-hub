@@ -1,6 +1,7 @@
 import connectToDatabase from "@/lib/db";
 import House from "@/models/House";
 import Member from "@/models/Member";
+import Rent from "@/models/Rent";
 import mongoose from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -28,10 +29,24 @@ export async function POST(request: NextRequest) {
     }
 
     const existingMember = await Member.findOne({ email, houseId });
+
     if (existingMember) {
       return NextResponse.json(
         { error: "Member with this email already exists in the house" },
         { status: 409 }
+      );
+    }
+
+    const latestRent = await Rent.findOne({ houseId }).sort({ month: -1 });
+
+    if (
+      latestRent &&
+      latestRent.isRentGenerated &&
+      latestRent.month.getMonth() + 1 === new Date().getMonth() + 1
+    ) {
+      return NextResponse.json(
+        { error: "Cannot add member, rent has already been generated" },
+        { status: 400 }
       );
     }
 
@@ -69,9 +84,11 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   await connectToDatabase();
 
-  try {
-    const houseId = request.nextUrl.searchParams.get("houseId");
+  const params = request.nextUrl.searchParams;
 
+  const houseId = params.get("houseId");
+
+  try {
     if (!houseId || !mongoose.Types.ObjectId.isValid(houseId)) {
       return NextResponse.json(
         { error: "Invalid or missing houseId" },
@@ -83,9 +100,11 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ members }, { status: 200 });
   } catch (error) {
-    console.error("Error in GET /members:", error);
     return NextResponse.json(
-      { error: "Failed to fetch members" },
+      {
+        error: "Failed to fetch members",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

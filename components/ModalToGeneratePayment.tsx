@@ -1,16 +1,18 @@
 "use client";
 
 import { MemberProps, PaymentProps, RentProps } from "@/lib/constants";
-import { convertCentsToDollars, convertDollarsToCents } from "@/lib/utils";
+import {
+  convertCentsToDollars,
+  convertDollarsToCents,
+  showErrorMessage,
+} from "@/lib/utils";
 
-import { generatePayment } from "@/services/rentServices";
+import { generatePayment, updateRentById } from "@/services/rentServices";
 import React, { useEffect, useState } from "react";
 import { RiLoader5Fill } from "react-icons/ri";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
-import { RootState } from "@/redux/store";
 import { IoClose } from "react-icons/io5";
-import { getMembersByHouseId, updateRentById } from "@/services/houseServices";
+import { getHouseById, getMembersByHouseId } from "@/services/houseServices";
 
 const ModalToGeneratePayment = ({
   rentData,
@@ -28,11 +30,46 @@ const ModalToGeneratePayment = ({
   activeHouse?: { houseName: string; houseId: string; defaultPrice: number };
 }) => {
   const router = useRouter();
-  const { houses } = useSelector((state: RootState) => state.house);
   const [paymentData, setPaymentData] = useState<PaymentProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [allMembers, setAllMembers] = useState<MemberProps[]>([]);
+
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [activeHouseData, setActiveHouseData] = useState<{
+    houseId: string;
+    actualHouseRent: number;
+    singleRoomRent: number;
+    activeHouseMembers: string[];
+  }>({
+    houseId: "",
+    actualHouseRent: 0,
+    singleRoomRent: 0,
+    activeHouseMembers: [],
+  });
+
+  useEffect(() => {
+    if (!activeHouse) return;
+
+    const fetchHouseByHouseId = async (houseId: string) => {
+      try {
+        const response = await getHouseById(houseId);
+        if (response.status === 200) {
+          const { house } = response.data;
+
+          setActiveHouseData({
+            houseId: house._id,
+            actualHouseRent: house.defaultPrice || 0,
+            singleRoomRent: house.singleRoomRent || 0,
+            activeHouseMembers: house.tenants || [],
+          });
+        }
+      } catch (error) {
+        showErrorMessage(error as Error);
+      }
+    };
+
+    fetchHouseByHouseId(activeHouse.houseId);
+  }, [activeHouse]);
 
   useEffect(() => {
     const fetchMembers = async () => {
@@ -45,13 +82,11 @@ const ModalToGeneratePayment = ({
           setAllMembers(response.data.members);
         }
       } catch (error) {
-        console.error("Error fetching members:", error);
+        showErrorMessage(error as Error);
       }
     };
 
-    if (activeHouse?.houseId) {
-      fetchMembers();
-    }
+    fetchMembers();
   }, [activeHouse]);
 
   useEffect(() => {
@@ -59,15 +94,6 @@ const ModalToGeneratePayment = ({
       router.push(`/rents/${rentId}/manage`);
     }
   }, [isRentGenerated, loading, isGenerating, rentId, router]);
-
-  const activeHouseData = houses.find(
-    (house) => house._id === activeHouse?.houseId
-  );
-
-  const activeHouseMembers = activeHouseData?.tenants;
-  const actutalHouseRent = activeHouseData?.defaultPrice || 0;
-
-  const singleRoomRent = activeHouseData?.singleRoomRent || 0;
 
   const allSingleRoomMembers = allMembers.filter(
     (member) => member.stayInSharedRoom === false
@@ -77,10 +103,12 @@ const ModalToGeneratePayment = ({
     (member) => member.stayInSharedRoom === true
   );
 
-  const totalSingleRoomRent = singleRoomRent * allSingleRoomMembers.length;
+  const totalSingleRoomRent =
+    activeHouseData.singleRoomRent * allSingleRoomMembers.length;
 
   const totalSharedRoomRent =
-    actutalHouseRent! - convertDollarsToCents(totalSingleRoomRent);
+    activeHouseData.actualHouseRent -
+    convertDollarsToCents(totalSingleRoomRent);
 
   const getHouseSplitByMember = (memberId: string) => {
     const member = allMembers.find((m) => m._id === memberId);
@@ -98,23 +126,28 @@ const ModalToGeneratePayment = ({
   const handleGeneratePayment = async () => {
     setIsGenerating(true);
     try {
-      if (!rentId || !activeHouseMembers || activeHouseMembers.length === 0) {
+      if (!rentId || activeHouseData.activeHouseMembers.length === 0) {
         throw new Error("No members found for this house");
       }
 
       const gasSplit =
-        convertDollarsToCents(rentData!.gas / activeHouseMembers.length) || 0;
+        convertDollarsToCents(
+          rentData!.gas / activeHouseData.activeHouseMembers.length
+        ) || 0;
       const electricitySplit =
         convertDollarsToCents(
-          rentData!.electricity / activeHouseMembers.length
+          rentData!.electricity / activeHouseData.activeHouseMembers.length
         ) || 0;
       const internetSplit =
-        convertDollarsToCents(rentData!.internet / activeHouseMembers.length) ||
-        0;
+        convertDollarsToCents(
+          rentData!.internet / activeHouseData.activeHouseMembers.length
+        ) || 0;
       const waterSplit =
-        convertDollarsToCents(rentData!.water / activeHouseMembers.length) || 0;
+        convertDollarsToCents(
+          rentData!.water / activeHouseData.activeHouseMembers.length
+        ) || 0;
 
-      activeHouseMembers.forEach((id) => {
+      activeHouseData.activeHouseMembers.forEach((id) => {
         const paymentDetails = {
           rentId,
           memberId: id,
