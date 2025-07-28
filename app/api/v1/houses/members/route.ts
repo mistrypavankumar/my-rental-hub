@@ -43,7 +43,10 @@ export async function POST(request: NextRequest) {
       latestRent.month.getMonth() + 1 === new Date().getMonth() + 1
     ) {
       return NextResponse.json(
-        { error: "Cannot add member, rent has already been generated" },
+        {
+          error:
+            "Cannot add new member, rent of this month has already been generated",
+        },
         { status: 400 }
       );
     }

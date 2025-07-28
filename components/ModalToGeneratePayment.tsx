@@ -56,8 +56,6 @@ const ModalToGeneratePayment = ({
         if (response.status === 200) {
           const { house } = response.data;
 
-          console.log("House data:", house);
-
           setActiveHouseData({
             houseId: house._id,
             actualHouseRent: house.defaultPrice || 0,
@@ -66,7 +64,7 @@ const ModalToGeneratePayment = ({
           });
         }
       } catch (error) {
-        showErrorMessage(error as Error);
+        console.error("Error fetching house by ID:", error);
       }
     };
 

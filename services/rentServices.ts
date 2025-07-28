@@ -31,8 +31,6 @@ export async function updateRentById(
   rentId: string,
   formData: RentProps | Partial<RentProps>
 ) {
-  console.log("Updating rent with ID:", rentId, "and data:", formData);
-
   try {
     const res = await axios.put(
       `/api/v1/houses/rents/rent?rentId=${rentId}`,
