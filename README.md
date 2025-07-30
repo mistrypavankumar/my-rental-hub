@@ -2,7 +2,31 @@
 
 MyRental-hub is a powerful full-stack web application designed to simplify and streamline rent management for shared living spaces. With this platform, users can create multiple houses, add and manage tenants, generate monthly rents, split utility bills, and track rent payments—all from one centralized dashboard.
 
-![MyRental-hub Preview](https://raw.githubusercontent.com/mistrypavankumar/my-rental-hub/main/public/preview.png)
+## 😎 Web Screenshot
+
+<div style="display: flex; gap: 10px; margin-bottom: 10px; justify-content: center;">
+  <img src="./public/assets/screenshots/home.png" alt="Home Screenshot 1" width="100%" />
+</div>
+
+<div>
+  <img src="./public/assets/screenshots/login.png" alt="Login Screenshot 1" width="48%" />
+  <img src="./public/assets/screenshots/register.png" alt="Register Screenshot 2" width="48%" />
+</div>
+
+<div style="display: flex; gap: 10px; margin-bottom: 10px; justify-content: center;">
+  <img src="./public/assets/screenshots/dashboard.png" alt="Login Screenshot 1" width="48%" />
+   <img src="./public/assets/screenshots/my-home.png" alt="My-Home Screenshot 2" width="48%" />
+</div>
+
+<div style="display: flex; gap: 10px; margin-bottom: 10px; justify-content: center;">
+  <img src="./public/assets/screenshots/members.png" alt="Members Screenshot 1" width="48%" />
+ <img src="./public/assets/screenshots/rents.png" alt="Rents Screenshot 2" width="48%" />
+</div>
+
+<div style="display: flex; gap: 10px; margin-bottom: 10px; justify-content: center;">
+  <img src="./public/assets/screenshots/generate.png" alt="Generate Screenshot 1" width="48%" />
+    <img src="./public/assets/screenshots/manage.png" alt="manage Screenshot 2" width="48%" />
+</div>
 
 ## 🚀 Features
 
