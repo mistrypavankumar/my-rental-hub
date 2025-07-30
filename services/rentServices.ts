@@ -106,6 +106,7 @@ export const updatePayment = async (paymentBody: {
   houseId: string;
   memberId: string;
   rentId: string;
+  memberName: string;
   paidAmount: number;
   remainingAmount: number;
 }) => {

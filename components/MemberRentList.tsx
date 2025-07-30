@@ -158,6 +158,7 @@ const MemberRentList = ({
         memberId: paymentAmount.memberId,
         rentId: paymentAmount.rentId,
         houseId: paymentAmount.houseId,
+        memberName: paymentAmount.memberName,
         paidAmount: amount,
         remainingAmount: convertCentsToDollars(remainingAmount),
       });
