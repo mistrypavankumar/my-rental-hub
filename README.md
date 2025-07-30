@@ -70,12 +70,6 @@ MyRental-hub is a powerful full-stack web application designed to simplify and s
 - [Vercel](https://vercel.com/)
 - MongoDB Atlas
 
-## 📸 Screenshots
-
-| Dashboard                                      | Create Rent                                        | Manage Rent                                        |
-| ---------------------------------------------- | -------------------------------------------------- | -------------------------------------------------- |
-| ![Dashboard](public/screenshots/dashboard.png) | ![Create Rent](public/screenshots/create-rent.png) | ![Manage Rent](public/screenshots/manage-rent.png) |
-
 ## 🛠️ Installation & Setup
 
 1. **Clone the Repository**
