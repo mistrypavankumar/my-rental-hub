@@ -221,17 +221,6 @@ const CreateHouseForm = ({
           label="Default Monthly Rent Price"
         />
 
-        <label className="flex items-center space-x-2 text-sm">
-          <input
-            type="checkbox"
-            name="utilitiesIncluded"
-            checked={formData.utilitiesIncluded}
-            onChange={handleInputChange}
-            className="accent-primary"
-          />
-          <span>Utilities Included</span>
-        </label>
-
         <CustomInputField
           type="date"
           name="paymentDueDate"

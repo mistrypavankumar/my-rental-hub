@@ -23,6 +23,8 @@ const Page = () => {
     houseId: "",
     role: "tenant",
     stayInSharedRoom: false,
+    utilitiesApplied: true,
+    houseRentApplied: true,
   });
 
   useEffect(() => {
@@ -83,6 +85,8 @@ const Page = () => {
         houseId: activeHouse?.houseId || "",
         role: "tenant",
         stayInSharedRoom: false,
+        utilitiesApplied: true,
+        houseRentApplied: true,
       });
 
       setFormMode("create");
@@ -156,6 +160,39 @@ const Page = () => {
               <option value="true">Staying in Shared Room</option>
               <option value="false">Staying in Single Room</option>
             </select>
+
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="utilitiesApplied"
+                  checked={formData.utilitiesApplied || false}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      utilitiesApplied: e.target.checked,
+                    })
+                  }
+                  className="h-4 w-4 border-gray-400 outline-none"
+                />
+                <label className="text-gray-600">Utilities Applied</label>
+              </div>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="houseRentApplied"
+                  checked={formData.houseRentApplied || false}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      houseRentApplied: e.target.checked,
+                    })
+                  }
+                  className="h-4 w-4 border-gray-400 outline-none"
+                />
+                <label className="text-gray-600">House Rent Applied</label>
+              </div>
+            </div>
 
             <button
               type="submit"

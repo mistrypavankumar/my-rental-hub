@@ -27,6 +27,14 @@ const memberSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  houseRentApplied: {
+    type: Boolean,
+    default: true,
+  },
+  utilitiesApplied: {
+    type: Boolean,
+    default: true,
+  },
   joinedAt: {
     type: Date,
     default: Date.now,

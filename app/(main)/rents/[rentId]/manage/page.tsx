@@ -73,7 +73,7 @@ const Page = () => {
   if (loading) return <Loader />;
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto">
       <MemberRentList
         rentPaymentData={rentPaymentData}
         membersData={membersData!}

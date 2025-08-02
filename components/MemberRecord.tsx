@@ -80,6 +80,8 @@ const MemberRecord = ({
           houseId: activeHouse?.houseId || "",
           role: "tenant",
           stayInSharedRoom: false,
+          utilitiesApplied: true,
+          houseRentApplied: true,
         });
         return;
       }
@@ -92,6 +94,8 @@ const MemberRecord = ({
         houseId: activeHouse?.houseId || "",
         role: member.role,
         stayInSharedRoom: member.stayInSharedRoom,
+        utilitiesApplied: member.utilitiesApplied,
+        houseRentApplied: member.houseRentApplied,
       });
 
       setFormMode("edit");

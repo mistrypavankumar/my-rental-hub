@@ -41,7 +41,7 @@ export interface House {
   ownerName: string;
   ownerPhone: string;
   defaultPrice: number;
-  utilitiesIncluded: boolean;
+  utilitiesIncluded?: boolean;
   paymentDueDate: string;
   lateFeePerDay: number;
   rooms: number;
@@ -59,6 +59,8 @@ export interface MemberProps {
   phone: string;
   email: string;
   houseId: string;
+  utilitiesApplied?: boolean;
+  houseRentApplied?: boolean;
   role?: "owner" | "tenant";
   stayInSharedRoom?: boolean;
   joinedAt?: Date;
@@ -95,7 +97,7 @@ export interface HouseRequest {
   ownerName: string;
   ownerPhone: string;
   defaultPrice: number;
-  utilitiesIncluded: boolean;
+  utilitiesIncluded?: boolean;
   paymentDueDate: string;
   lateFeePerDay: number;
   rooms: number;
@@ -115,6 +117,7 @@ export interface PaymentProps {
   totalRent?: number;
   paidAmount?: number;
   remainingAmount?: number;
+  utilitiesApplied?: boolean;
   paid: boolean;
   paidDate?: string; // ISO string format
   notified?: boolean;

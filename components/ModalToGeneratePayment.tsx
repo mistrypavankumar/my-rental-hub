@@ -95,12 +95,24 @@ const ModalToGeneratePayment = ({
     }
   }, [isRentGenerated, loading, isGenerating, rentId, router]);
 
+  // Filter all the members based on single room status and house rent applied
   const allSingleRoomMembers = allMembers.filter(
-    (member) => member.stayInSharedRoom === false
+    (member) => member.stayInSharedRoom === false && member.houseRentApplied
   );
 
+  // Filter all the members based on shared room status and house rent applied
   const allSharedRoomMembers = allMembers.filter(
-    (member) => member.stayInSharedRoom === true
+    (member) => member.stayInSharedRoom === true && member.houseRentApplied
+  );
+
+  const utilitiesAppliedMembers = activeHouseData.activeHouseMembers.filter(
+    (id) =>
+      allMembers.find((member) => member._id === id && member.utilitiesApplied)
+  );
+
+  const houseRentAppliedMembers = activeHouseData.activeHouseMembers.filter(
+    (id) =>
+      allMembers.find((member) => member._id === id && member.houseRentApplied)
   );
 
   const totalSingleRoomRent =
@@ -123,6 +135,8 @@ const ModalToGeneratePayment = ({
     }
   };
 
+  console.log(houseRentAppliedMembers);
+
   const handleGeneratePayment = async () => {
     setIsGenerating(true);
     try {
@@ -131,20 +145,19 @@ const ModalToGeneratePayment = ({
       }
 
       const gasSplit =
-        convertDollarsToCents(
-          rentData!.gas / activeHouseData.activeHouseMembers.length
-        ) || 0;
+        convertDollarsToCents(rentData!.gas / utilitiesAppliedMembers.length) ||
+        0;
       const electricitySplit =
         convertDollarsToCents(
-          rentData!.electricity / activeHouseData.activeHouseMembers.length
+          rentData!.electricity / utilitiesAppliedMembers.length
         ) || 0;
       const internetSplit =
         convertDollarsToCents(
-          rentData!.internet / activeHouseData.activeHouseMembers.length
+          rentData!.internet / utilitiesAppliedMembers.length
         ) || 0;
       const waterSplit =
         convertDollarsToCents(
-          rentData!.water / activeHouseData.activeHouseMembers.length
+          rentData!.water / utilitiesAppliedMembers.length
         ) || 0;
 
       activeHouseData.activeHouseMembers.forEach((id) => {
@@ -153,11 +166,21 @@ const ModalToGeneratePayment = ({
           memberId: id,
           houseId: activeHouse?.houseId || "",
           month,
-          houseRent: getHouseSplitByMember(id),
-          gas: convertCentsToDollars(gasSplit),
-          electricity: convertCentsToDollars(electricitySplit),
-          internet: convertCentsToDollars(internetSplit),
-          water: convertCentsToDollars(waterSplit),
+          houseRent: houseRentAppliedMembers.includes(id)
+            ? getHouseSplitByMember(id)
+            : 0,
+          gas: utilitiesAppliedMembers.includes(id)
+            ? convertCentsToDollars(gasSplit)
+            : 0,
+          electricity: utilitiesAppliedMembers.includes(id)
+            ? convertCentsToDollars(electricitySplit)
+            : 0,
+          internet: utilitiesAppliedMembers.includes(id)
+            ? convertCentsToDollars(internetSplit)
+            : 0,
+          water: utilitiesAppliedMembers.includes(id)
+            ? convertCentsToDollars(waterSplit)
+            : 0,
           paid: false,
         };
 

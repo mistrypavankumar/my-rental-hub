@@ -52,6 +52,10 @@ const paymentSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  utilitiesApplied: {
+    type: Boolean,
+    default: true,
+  },
   paid: {
     type: Boolean,
     default: false,

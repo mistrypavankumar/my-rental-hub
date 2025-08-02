@@ -9,8 +9,16 @@ export async function POST(request: NextRequest) {
   await connectToDatabase();
 
   try {
-    const { name, phone, email, houseId, role, stayInSharedRoom } =
-      await request.json();
+    const {
+      name,
+      phone,
+      email,
+      houseId,
+      role,
+      stayInSharedRoom,
+      utilitiesApplied,
+      houseRentApplied,
+    } = await request.json();
 
     if (!name || !phone || !email || !houseId) {
       return NextResponse.json(
@@ -58,6 +66,8 @@ export async function POST(request: NextRequest) {
       houseId,
       role: role || "tenant",
       stayInSharedRoom,
+      utilitiesApplied: utilitiesApplied ?? true,
+      houseRentApplied: houseRentApplied ?? true,
     });
 
     if (!newMember) {
