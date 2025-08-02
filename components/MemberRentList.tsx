@@ -240,15 +240,17 @@ const MemberRentList = ({
                   >
                     {_member!.isSharedRoom ? "Shared Room" : "Single Room"}
                   </td>
-                  <td className="p-2 border">${member.houseRent}</td>
-                  <td className="p-2 border">${member.gas}</td>
-                  <td className="p-2 border">${member.electricity}</td>
-                  <td className="p-2 border">${member.internet}</td>
-                  <td className="p-2 border">${member.water}</td>
-                  <td className="p-2 border font-semibold">
+                  <td className="p-2 border text-right">${member.houseRent}</td>
+                  <td className="p-2 border text-right">${member.gas}</td>
+                  <td className="p-2 border text-right">
+                    ${member.electricity}
+                  </td>
+                  <td className="p-2 border text-right">${member.internet}</td>
+                  <td className="p-2 border text-right">${member.water}</td>
+                  <td className="p-2 border text-right font-semibold">
                     ${member.totalRent?.toFixed(2)}
                   </td>
-                  <td className="p-2 border border-primary text-red-600 font-semibold">
+                  <td className="p-2 border text-right border-primary text-red-600 font-semibold">
                     ${member.remainingAmount?.toFixed(2)}
                   </td>
                   <td className="p-2 border">
@@ -268,28 +270,27 @@ const MemberRentList = ({
               >
                 Total Amount
               </td>
-              <td className="p-2 border text-center font-bold text-[18px]">
+              <td className="p-2 border text-right font-bold text-[18px]">
                 ${convertCentsToDollars(sumOfHouseRent)}
               </td>
-              <td className="p-2 border text-center font-bold text-[18px]">
+              <td className="p-2 border text-right font-bold text-[18px]">
                 ${convertCentsToDollars(sumOfGas)}
               </td>
-              <td className="p-2 border text-center font-bold text-[18px]">
+              <td className="p-2 border text-right font-bold text-[18px]">
                 ${convertCentsToDollars(sumOfElectricity)}
               </td>
-              <td className="p-2 border text-center font-bold text-[18px]">
+              <td className="p-2 border text-right font-bold text-[18px]">
                 ${convertCentsToDollars(sumOfInternet)}
               </td>
-              <td className="p-2 border text-center font-bold text-[18px]">
+              <td className="p-2 border text-right font-bold text-[18px]">
                 ${convertCentsToDollars(sumOfWater)}
               </td>
-              <td className="p-2 border text-center font-bold text-[18px]">
+              <td className="p-2 border text-right font-bold text-[18px]">
                 ${convertCentsToDollars(totalRent)}
               </td>
-              <td className="p-2 border text-center border-primary font-bold text-[18px] text-red-600">
+              <td className="p-2 border text-right border-primary font-bold text-[18px] text-red-600">
                 ${convertCentsToDollars(sumOfRemainingAmounts)}
               </td>
-              <td className="p-2 border text-center"></td>
             </tr>
           </tbody>
         </table>

@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
       stayInSharedRoom,
       utilitiesApplied,
       houseRentApplied,
+      isStayHalfMonth,
     } = await request.json();
 
     if (!name || !phone || !email || !houseId) {
@@ -68,6 +69,7 @@ export async function POST(request: NextRequest) {
       stayInSharedRoom,
       utilitiesApplied: utilitiesApplied ?? true,
       houseRentApplied: houseRentApplied ?? true,
+      isStayHalfMonth: isStayHalfMonth ?? false,
     });
 
     if (!newMember) {

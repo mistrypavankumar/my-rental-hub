@@ -35,6 +35,10 @@ const memberSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  isStayHalfMonth: {
+    type: Boolean,
+    default: false,
+  },
   joinedAt: {
     type: Date,
     default: Date.now,

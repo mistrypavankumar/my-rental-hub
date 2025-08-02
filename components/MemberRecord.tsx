@@ -82,6 +82,7 @@ const MemberRecord = ({
           stayInSharedRoom: false,
           utilitiesApplied: true,
           houseRentApplied: true,
+          isStayHalfMonth: false,
         });
         return;
       }
@@ -96,6 +97,7 @@ const MemberRecord = ({
         stayInSharedRoom: member.stayInSharedRoom,
         utilitiesApplied: member.utilitiesApplied,
         houseRentApplied: member.houseRentApplied,
+        isStayHalfMonth: member.isStayHalfMonth,
       });
 
       setFormMode("edit");
@@ -156,9 +158,17 @@ const MemberRecord = ({
             </div>
             <div>
               <div className="flex flex-col items-end justify-end">
-                <h2 className="font-bold text-gray-400 capitalize">
+                <h2 className={`font-bold text-gray-400 capitalize`}>
                   {member.role} |{" "}
-                  {member.stayInSharedRoom ? "Shared room" : "Single room"}
+                  <span
+                    className={`${
+                      member.stayInSharedRoom
+                        ? "text-gray-400"
+                        : "text-green-500"
+                    }`}
+                  >
+                    {member.stayInSharedRoom ? "Shared room" : "Single room"}
+                  </span>
                 </h2>
                 <div className="flex gap-3 text-gray-500">
                   <p

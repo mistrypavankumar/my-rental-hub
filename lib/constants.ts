@@ -61,6 +61,7 @@ export interface MemberProps {
   houseId: string;
   utilitiesApplied?: boolean;
   houseRentApplied?: boolean;
+  isStayHalfMonth?: boolean;
   role?: "owner" | "tenant";
   stayInSharedRoom?: boolean;
   joinedAt?: Date;

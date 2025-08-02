@@ -122,20 +122,49 @@ const ModalToGeneratePayment = ({
     activeHouseData.actualHouseRent -
     convertDollarsToCents(totalSingleRoomRent);
 
-  const getHouseSplitByMember = (memberId: string) => {
-    const member = allMembers.find((m) => m._id === memberId);
+  const getHouseSplitByMember = (memberId: string): number => {
+    const member = allMembers.find(
+      (m) => m._id === memberId && m.houseRentApplied
+    );
+
     if (!member) return 0;
 
+    const totalSharedRoomFullStayers = allSharedRoomMembers.filter(
+      (m) => !m.isStayHalfMonth
+    );
+
+    const totalSharedRoomHalfStayers = allSharedRoomMembers.filter(
+      (m) => m.isStayHalfMonth
+    );
+
+    const fullCount = totalSharedRoomFullStayers.length;
+    const halfCount = totalSharedRoomHalfStayers.length;
+
+    // full member counts as 1, half member counts as 0.5
+    const totalWeightedSharedMembers = fullCount + halfCount * 0.5 || 1;
+
+    const sharedRoomPerFullStayer = convertCentsToDollars(
+      totalSharedRoomRent / totalWeightedSharedMembers
+    );
+
     if (member.stayInSharedRoom) {
-      return convertCentsToDollars(
-        totalSharedRoomRent / allSharedRoomMembers.length
-      );
-    } else {
-      return totalSingleRoomRent / allSingleRoomMembers.length;
+      return member.isStayHalfMonth
+        ? sharedRoomPerFullStayer / 2
+        : sharedRoomPerFullStayer;
     }
+
+    // Single room case
+    const singleRoomPerMember =
+      totalSingleRoomRent / (allSingleRoomMembers.length || 1);
+
+    return member.isStayHalfMonth
+      ? singleRoomPerMember / 2
+      : singleRoomPerMember;
   };
 
-  console.log(houseRentAppliedMembers);
+  const calculateHouseRent = (id: string) => {
+    return houseRentAppliedMembers.includes(id) ? getHouseSplitByMember(id) : 0;
+  };
 
   const handleGeneratePayment = async () => {
     setIsGenerating(true);
@@ -166,9 +195,7 @@ const ModalToGeneratePayment = ({
           memberId: id,
           houseId: activeHouse?.houseId || "",
           month,
-          houseRent: houseRentAppliedMembers.includes(id)
-            ? getHouseSplitByMember(id)
-            : 0,
+          houseRent: calculateHouseRent(id),
           gas: utilitiesAppliedMembers.includes(id)
             ? convertCentsToDollars(gasSplit)
             : 0,
@@ -183,21 +210,6 @@ const ModalToGeneratePayment = ({
             : 0,
           paid: false,
         };
-
-        // const totalRent =
-        //   paymentDetails.houseRent +
-        //   paymentDetails.gas +
-        //   paymentDetails.electricity +
-        //   paymentDetails.internet +
-        //   paymentDetails.water;
-
-        // allMembers.forEach(async (member) => {
-        //   if (member._id === id) {
-        //     const message = `Hello ${member.name},\n\nYour rent for the month of ${month} is ready. Your rent of this month is $${totalRent}.\n\nThank you!`;
-
-        //     await sendMessageToMember(member.phone, message);
-        //   }
-        // });
 
         generatePayment(paymentDetails)
           .then(async (response) => {

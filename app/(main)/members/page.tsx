@@ -25,6 +25,7 @@ const Page = () => {
     stayInSharedRoom: false,
     utilitiesApplied: true,
     houseRentApplied: true,
+    isStayHalfMonth: false,
   });
 
   useEffect(() => {
@@ -87,6 +88,7 @@ const Page = () => {
         stayInSharedRoom: false,
         utilitiesApplied: true,
         houseRentApplied: true,
+        isStayHalfMonth: false,
       });
 
       setFormMode("create");
@@ -192,6 +194,21 @@ const Page = () => {
                 />
                 <label className="text-gray-600">House Rent Applied</label>
               </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                name="isStayHalfMonth"
+                checked={formData.isStayHalfMonth || false}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    isStayHalfMonth: e.target.checked,
+                  })
+                }
+                className="h-4 w-4 border-gray-400 outline-none"
+              />
+              <label className="text-gray-600">Staying Half Month</label>
             </div>
 
             <button
