@@ -295,7 +295,7 @@ const MemberRentList = ({
           </tbody>
         </table>
       </div>
-      <div className="mt-6 flex justify-between items-end">
+      <div className="mt-6 flex flex-col md:flex-row justify-between md:items-end gap-10">
         <div>
           <h3 className="text-lg font-bold">Payment Summary</h3>
           <p>Total Rent: ${convertCentsToDollars(totalRent)}</p>
@@ -303,7 +303,7 @@ const MemberRentList = ({
             Remaining Amounts: ${convertCentsToDollars(sumOfRemainingAmounts)}
           </p>
         </div>
-        <div>
+        <div className="flex w-full justify-between md:justify-end">
           <input
             type="number"
             placeholder="Enter payment amount"
@@ -311,11 +311,11 @@ const MemberRentList = ({
             onChange={(e) =>
               setPaymentAmount({ ...paymentAmount, amount: e.target.value })
             }
-            className="border-b-2 border-primary outline-none focus:border-primary-light p-2"
+            className="border-b-2 border-primary outline-none focus:border-primary-light p-2 w-full md:w-fit"
           />
           <button
             onClick={handleUpdatePayment}
-            className="ml-4 px-4 py-2 bg-primary hover:bg-primary-light transition-colors duration-300 text-white rounded cursor-pointer"
+            className="ml-4 px-4 py-2 text-nowrap bg-primary hover:bg-primary-light transition-colors duration-300 text-white rounded cursor-pointer"
           >
             Update Payment
           </button>
