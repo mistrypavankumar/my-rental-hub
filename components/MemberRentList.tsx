@@ -299,7 +299,7 @@ const MemberRentList = ({
         <div>
           <h3 className="text-lg font-bold">Payment Summary</h3>
           <p>Total Rent: ${convertCentsToDollars(totalRent)}</p>
-          <p>
+          <p className="text-nowrap">
             Remaining Amounts: ${convertCentsToDollars(sumOfRemainingAmounts)}
           </p>
         </div>
